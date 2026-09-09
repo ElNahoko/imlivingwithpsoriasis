@@ -1,0 +1,50 @@
+{
+  "name": "imlivingwithpsoriasis",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "An interactive guide for people living with psoriasis",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@mantine/core": "^9.6.0",
+    "@mantine/hooks": "^9.6.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@tabler/icons-react": "^3.46.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.186.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@types/three": "^0.185.4",
+    "@vitejs/plugin-react": "^6.1.1",
+    "postcss": "^8.5.28",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "author": "Adham Baquroun",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ElNahoko/imlivingwithpsoriasis.git"
+  },
+  "keywords": [
+    "psoriasis",
+    "health",
+    "education",
+    "react",
+    "three.js",
+    "accessibility"
+  ]
+}
