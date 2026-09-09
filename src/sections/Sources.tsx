@@ -15,7 +15,13 @@ export function Sources() {
           <Stack gap="sm">
             {group.items.map((item) => (
               <div key={item.url}>
-                <Anchor href={item.url} target="_blank" rel="noopener noreferrer" fw={600} size="sm">
+                <Anchor
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  fw={600}
+                  size="sm"
+                >
                   {item.label}
                 </Anchor>
                 <Text size="xs" c="dimmed" style={{ wordBreak: 'break-all' }}>

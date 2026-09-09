@@ -89,7 +89,11 @@ export function NavRail({ compact }: { compact: boolean }) {
                 leftSection={<Icon size={20} stroke={1.7} />}
                 rightSection={
                   visited.includes(id) && section !== id ? (
-                    <Box w={7} h={7} style={{ borderRadius: '50%', background: 'var(--mantine-color-green-6)' }} />
+                    <Box
+                      w={7}
+                      h={7}
+                      style={{ borderRadius: '50%', background: 'var(--mantine-color-green-6)' }}
+                    />
                   ) : null
                 }
                 onClick={() => toggle(id)}

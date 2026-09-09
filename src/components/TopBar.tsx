@@ -42,7 +42,12 @@ export function TopBar({
       </Group>
 
       <Group gap="xs" wrap="nowrap" style={{ pointerEvents: 'auto' }}>
-        <Paper withBorder p="xs" px="sm" style={{ backdropFilter: 'blur(20px)', background: 'rgba(255,255,255,.84)' }}>
+        <Paper
+          withBorder
+          p="xs"
+          px="sm"
+          style={{ backdropFilter: 'blur(20px)', background: 'rgba(255,255,255,.84)' }}
+        >
           {!compact && (
             <Text tt="uppercase" fw={600} size="xs" c="dimmed" lts="0.06em">
               Body sites explored
@@ -57,13 +62,25 @@ export function TopBar({
             </Text>
           </Group>
           {!compact && (
-            <Progress value={(explored / SITES.length) * 100} size="xs" mt={5} radius="xl" w={130} />
+            <Progress
+              value={(explored / SITES.length) * 100}
+              size="xs"
+              mt={5}
+              radius="xl"
+              w={130}
+            />
           )}
         </Paper>
 
         {compact ? (
           <Tooltip label="Guided tour">
-            <ActionIcon variant="default" size={38} radius="md" onClick={onTour} aria-label="Guided tour">
+            <ActionIcon
+              variant="default"
+              size={38}
+              radius="md"
+              onClick={onTour}
+              aria-label="Guided tour"
+            >
               <IconRoute size={18} />
             </ActionIcon>
           </Tooltip>

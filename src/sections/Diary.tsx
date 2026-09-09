@@ -1,19 +1,28 @@
 import { useState } from 'react'
 import {
-  Box, Button, Card, Group, SegmentedControl, SimpleGrid, Slider, Stack, Text, TextInput, Tooltip,
+  Box,
+  Button,
+  Card,
+  Group,
+  SegmentedControl,
+  SimpleGrid,
+  Slider,
+  Stack,
+  Text,
+  TextInput,
+  Tooltip,
 } from '@mantine/core'
 import { useStore, todayKey, type DiaryEntry } from '../store'
+import { average, lastDays } from '../lib/dates'
 import { Lede, Panel, TipList } from '../components/ui'
 
 const FLARE_LABELS = ['Calm', 'Mild', 'Moderate', 'Severe']
-const FLARE_COLORS = ['var(--mantine-color-green-6)', 'var(--mantine-color-teal-5)', 'var(--mantine-color-yellow-6)', 'var(--mantine-color-red-6)']
-
-export const lastDays = (n: number) =>
-  Array.from({ length: n }, (_, i) => {
-    const d = new Date()
-    d.setDate(d.getDate() - (n - 1 - i))
-    return d.toISOString().slice(0, 10)
-  })
+const FLARE_COLORS = [
+  'var(--mantine-color-green-6)',
+  'var(--mantine-color-teal-5)',
+  'var(--mantine-color-yellow-6)',
+  'var(--mantine-color-red-6)',
+]
 
 export function Diary() {
   const diary = useStore((s) => s.diary)
@@ -26,9 +35,10 @@ export function Diary() {
 
   const days = lastDays(14)
   const entries = days.map((d) => diary[d])
-  const week = lastDays(7).map((d) => diary[d]).filter(Boolean)
-  const average = (values: number[]) =>
-    values.length ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1) : '–'
+  const week = lastDays(7)
+    .map((d) => diary[d])
+    .filter(Boolean)
+  const show = (values: number[]) => average(values)?.toFixed(1) ?? '–'
   const roughDays = entries.filter((e) => e && e.flare >= 2).length
 
   return (
@@ -127,7 +137,8 @@ export function Diary() {
                     minHeight: 3,
                     borderRadius: '4px 4px 2px 2px',
                     background: e ? FLARE_COLORS[e.flare] : 'var(--mantine-color-gray-3)',
-                    outline: day === todayKey() ? '2px solid var(--mantine-color-green-6)' : undefined,
+                    outline:
+                      day === todayKey() ? '2px solid var(--mantine-color-green-6)' : undefined,
                     outlineOffset: 2,
                     transition: 'height .4s',
                   }}
@@ -139,7 +150,7 @@ export function Diary() {
         <SimpleGrid cols={3} spacing="xs" mt="lg">
           <Card padding="xs">
             <Text ff="Lexend" fw={600} fz={22}>
-              {average(week.map((e) => e!.itch))}
+              {show(week.map((e) => e!.itch))}
             </Text>
             <Text size="xs" c="dimmed">
               Average itch, 7 days
@@ -155,7 +166,7 @@ export function Diary() {
           </Card>
           <Card padding="xs">
             <Text ff="Lexend" fw={600} fz={22}>
-              {average(week.map((e) => e!.sleep))}
+              {show(week.map((e) => e!.sleep))}
             </Text>
             <Text size="xs" c="dimmed">
               Average sleep, hours

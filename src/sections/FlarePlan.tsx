@@ -5,7 +5,9 @@ import { Lede } from '../components/ui'
 export function FlarePlan() {
   return (
     <Stack gap="md">
-      <Lede>A flare is data, not failure. Run through these in order, and log what came before it.</Lede>
+      <Lede>
+        A flare is data, not failure. Run through these in order, and log what came before it.
+      </Lede>
       <Accordion variant="separated" defaultValue={FLARE_PLAN[0][0]} radius="md">
         {FLARE_PLAN.map(([title, body], i) => (
           <Accordion.Item key={title} value={title}>

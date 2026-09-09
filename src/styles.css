@@ -1,5 +1,11 @@
 :root {
-  --page-bg: radial-gradient(110% 80% at 50% 45%, #ffffff 0%, #f4f7fa 38%, #e6edf4 72%, #d6e1eb 100%);
+  --page-bg: radial-gradient(
+    110% 80% at 50% 45%,
+    #ffffff 0%,
+    #f4f7fa 38%,
+    #e6edf4 72%,
+    #d6e1eb 100%
+  );
 }
 
 html,
@@ -21,7 +27,8 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(rgba(18, 42, 61, 0.045) 1px, transparent 1px),
+  background-image:
+    linear-gradient(rgba(18, 42, 61, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(18, 42, 61, 0.045) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(70% 70% at 50% 50%, #000 20%, transparent 100%);
@@ -34,7 +41,10 @@ body {
 }
 
 .site-label {
-  font: 600 12.5px/1 'Source Sans 3', system-ui, sans-serif;
+  font:
+    600 12.5px/1 'Source Sans 3',
+    system-ui,
+    sans-serif;
   white-space: nowrap;
   padding: 5px 9px;
   border-radius: 6px;
@@ -42,7 +52,10 @@ body {
   border: 1px solid rgba(18, 42, 61, 0.12);
   box-shadow: 0 4px 14px rgba(18, 42, 61, 0.1);
   color: #122a3d;
-  transition: opacity 0.2s, background 0.2s, color 0.2s;
+  transition:
+    opacity 0.2s,
+    background 0.2s,
+    color 0.2s;
   user-select: none;
   pointer-events: none;
 }

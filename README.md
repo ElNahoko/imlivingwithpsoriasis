@@ -3,31 +3,32 @@
 An interactive guide for the 125 million people who live with psoriasis, and for
 the people who love them.
 
-Psoriasis is explained badly almost everywhere. Either it is a wall of clinical
-text, or it is a stock photo of an elbow. This is an attempt at something
-kinder: a body you can turn around, plaques you can tap, and plain answers to
-the questions people actually ask. Why here? What sets it off? What should I
-eat? What do I say to my partner? What do I tell my doctor next week?
+Psoriasis gets explained badly almost everywhere. Either it is a wall of
+clinical text, or it is a stock photo of an elbow. This is an attempt at
+something kinder: a body you can turn around, plaques you can tap, and plain
+answers to the questions people actually ask. Why here? What sets it off? What
+should I eat? What do I say to my partner? What do I tell my doctor next week?
 
-It is free, open source, and it never sends your data anywhere. The skin diary
-and your daily habits stay in your own browser.
+It is free, it is open source, and nothing you enter leaves your browser.
 
 ## What's inside
 
-- **A body you can explore.** A real 3D anatomical model with the eight places
-  psoriasis appears most. Tap a plaque to learn what it looks like there, why
-  that spot in particular, and what actually helps.
-- **How it works.** Two skin clocks side by side: 28 days on healthy skin, four
-  on psoriasis. Then the immune chain from trigger to plaque.
-- **Flare triggers.** Twelve weighted switches. Turn on your week, see the risk.
-- **Stress and skin.** The brain-to-skin pathway, and a two-minute breathing
-  exercise for when you need it.
-- **Food and drink.** Sixty foods across ten categories, each with the reasoning,
-  plus a plate guide, a weekly rhythm and eight honest swaps.
-- **Daily habits, treatments and a flare plan.** The routine, the ladder from
-  creams to biologics, and what to do in the first hours of a flare.
-- **A skin diary and doctor visit prep.** Twenty seconds a day becomes the chart
-  and the summary your dermatologist actually wants to see.
+**A body you can explore.** A real anatomical model with the eight places
+psoriasis appears most often. Tap a plaque to read what it looks like there, why
+that spot in particular, and what actually helps. Sites you have visited get
+marked on the skin.
+
+**A skin cross-section you can turn around.** The disease is a speed problem, so
+the app shows it as one: cells born at the basal layer, rising, flattening,
+losing their nucleus, shedding. Switch to psoriasis and the same block rebuilds
+in four days instead of twenty-eight, the spinous layer swells, the granular
+layer nearly vanishes, capillaries climb and dilate, and scale piles up on top.
+
+**The rest of it.** Twelve weighted flare triggers, the stress pathway with a
+breathing exercise, sixty foods across ten categories with the reasoning for
+each, a daily habit routine, the treatment ladder from creams to biologics, a
+flare plan, the whole-body checks worth keeping up, a skin diary, and a doctor
+visit prep sheet built from whatever you have logged.
 
 ## Running it
 
@@ -38,39 +39,65 @@ npm run dev
 
 Then open http://localhost:5173.
 
-To build for production: `npm run build`. The output in `dist/` is a static
-site. It deploys to Vercel, Netlify or GitHub Pages with no configuration and no
-server.
+| Command             | What it does                        |
+| ------------------- | ----------------------------------- |
+| `npm run dev`       | dev server with hot reload          |
+| `npm run build`     | typechecks, then builds into `dist` |
+| `npm test`          | unit tests                          |
+| `npm run lint`      | ESLint                              |
+| `npm run typecheck` | TypeScript, no emit                 |
 
-## Built with
+`dist` is a static site. It deploys to Vercel, Netlify or GitHub Pages with no
+configuration and no server.
 
-React and TypeScript, [Vite](https://vite.dev), [Mantine](https://mantine.dev)
-for the interface, and [React Three
-Fiber](https://docs.pmnd.rs/react-three-fiber) with
-[three.js](https://threejs.org) for the body. The 3D model is the
-[MakeHuman](http://www.makehumancommunity.org/) base mesh, released as CC0.
+## How it is put together
 
 ```
 src/
-  data/         the content: sites, triggers, foods, clinical notes, sources
-  components/   the 3D scene and the app chrome
-  sections/     one file per section of the guide
+  data/         content: body sites, triggers, foods, skin layers, clinical notes, sources
+  lib/          pure logic: dates, seeded randomness, the doctor summary, tour steps
+  components/   the two 3D scenes and the app chrome
+  sections/     one file per section, wired together by a registry
+  store.ts      app state, with the diary and habits persisted locally
 ```
 
-The medical content is written from the sources listed inside the app, under
-*Sources and credits*: the WHO global report, The Lancet and BMJ reviews, NICE
-and American Academy of Dermatology guidance, and the published work on diet,
-weight, smoking, stress and comorbidity.
+Content lives in `data/` as typed modules, so adding a food or a body site is a
+data change rather than a component change. Anything with real logic in it lives
+in `lib/` as a pure function, which is why the doctor summary and the date
+handling can be unit tested without rendering anything.
+
+Both 3D scenes are declarative React Three Fiber. Randomness is seeded, so a
+render is reproducible and the components stay pure. The camera in each scene
+frames itself from the actual geometry rather than from hand-tuned constants,
+because a psoriatic skin block is nearly twice as tall as a healthy one and
+would otherwise grow straight out of frame.
+
+Built with React, TypeScript, [Vite](https://vite.dev),
+[Mantine](https://mantine.dev), [React Three
+Fiber](https://docs.pmnd.rs/react-three-fiber) and
+[three.js](https://threejs.org). The human model is the
+[MakeHuman](http://www.makehumancommunity.org/) base mesh, released as CC0.
+
+A note on versions: TypeScript is pinned to 5.x rather than 7, because
+typescript-eslint refuses to run under 7 and working lint rules are worth more
+here than being early.
+
+## Where the medical content comes from
+
+The sources are listed in the app itself, under _Sources and credits_: the WHO
+global report on psoriasis, reviews in The Lancet and the BMJ, NICE and American
+Academy of Dermatology guidance, and the published work on diet, weight,
+smoking, stress and comorbidity. Figures are rounded, and the app says so.
 
 ## Please read this part
 
 This is an educational guide. It is not medical advice, it cannot examine you,
 and it does not know your history. Nothing here should be used to start, stop or
 change a medicine. If your skin, your joints or your mood are getting worse,
-please talk to a doctor.
+talk to a doctor.
 
 If something in here is wrong, or reads unkindly to someone who has this
-condition, open an issue. That kind of correction is the most useful thing you
+condition, please open an issue. That correction is the most useful thing anyone
 can contribute.
 
 ## Licence

@@ -23,16 +23,17 @@ function BreathingCircle() {
       timer.current = window.setTimeout(advance, PHASES[(phase + 1) % 3].ms)
     }
     timer.current = window.setTimeout(advance, PHASES[phase % 3].ms)
-    const tick = window.setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000)
+    const tick = window.setInterval(() => {
+      setLeft((remaining) => {
+        if (remaining <= 1) setRunning(false)
+        return Math.max(0, remaining - 1)
+      })
+    }, 1000)
     return () => {
       window.clearTimeout(timer.current)
       window.clearInterval(tick)
     }
   }, [running, phase])
-
-  useEffect(() => {
-    if (left === 0 && running) setRunning(false)
-  }, [left, running])
 
   const current = PHASES[phase % 3]
   return (
@@ -96,8 +97,8 @@ export function Stress() {
   return (
     <Stack gap="md">
       <Lede>
-        Stress is the trigger people with psoriasis report most, and the one most often dismissed. It
-        is not in your head: it is a measurable pathway from brain to skin.
+        Stress is the trigger people with psoriasis report most, and the one most often dismissed.
+        It is not in your head: it is a measurable pathway from brain to skin.
       </Lede>
       <Panel title="How stress reaches the skin">
         <Stack gap="sm">

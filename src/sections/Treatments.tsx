@@ -30,7 +30,12 @@ export function Treatments() {
         </Card>
       ))}
 
-      <Alert color="yellow" variant="light" icon={<IconInfoCircle size={18} />} title="Not medical advice">
+      <Alert
+        color="yellow"
+        variant="light"
+        icon={<IconInfoCircle size={18} />}
+        title="Not medical advice"
+      >
         This explains the options so you can have a better conversation with your doctor. Never
         start, stop or change a medicine because of a website. Stopping strong steroids abruptly can
         itself trigger a severe flare.

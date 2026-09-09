@@ -1,7 +1,6 @@
 import landmarks from './landmarks.json'
 
-export type SiteId =
-  | 'scalp' | 'face' | 'elbow' | 'lowback' | 'nails' | 'folds' | 'knee' | 'soles'
+export type SiteId = 'scalp' | 'face' | 'elbow' | 'lowback' | 'nails' | 'folds' | 'knee' | 'soles'
 
 export type Landmark = { p: [number, number, number]; n: [number, number, number] }
 
@@ -32,8 +31,7 @@ export const SITES: Site[] = [
     points: lm.scalp,
     looks:
       'Anything from fine, dandruff-like flakes to thick, crusted plaques that spread past the hairline onto the forehead and neck. It is frequently the very first sign.',
-    why:
-      'The scalp is rich in oil glands and covered by hair that traps scale, so plaques thicken instead of shedding. Combing, scratching and tight hairstyles add the small daily injuries that keep the immune signal switched on.',
+    why: 'The scalp is rich in oil glands and covered by hair that traps scale, so plaques thicken instead of shedding. Combing, scratching and tight hairstyles add the small daily injuries that keep the immune signal switched on.',
     care: [
       'Use a medicated shampoo (coal tar or salicylic acid) and leave it on for 5 minutes before rinsing',
       'Apply a steroid scalp solution or foam to the skin, not the hair',
@@ -51,8 +49,7 @@ export const SITES: Site[] = [
     points: lm.face,
     looks:
       'Red, slightly scaly patches on the eyebrows, upper forehead, the crease beside the nose, and in or behind the ears. Facial skin is thin, so plaques look milder but feel more exposed.',
-    why:
-      'Plaques cluster where oil glands are densest: the eyebrows, the sides of the nose, the ears. That is why facial psoriasis often overlaps with seborrhoeic dermatitis. This skin is thin and sun-exposed, so it reacts quickly to injury and burn.',
+    why: 'Plaques cluster where oil glands are densest: the eyebrows, the sides of the nose, the ears. That is why facial psoriasis often overlaps with seborrhoeic dermatitis. This skin is thin and sun-exposed, so it reacts quickly to injury and burn.',
     care: [
       'Only mild steroids or a calcineurin inhibitor here; strong steroids thin facial skin within weeks',
       'Fragrance-free moisturiser morning and night',
@@ -70,8 +67,7 @@ export const SITES: Site[] = [
     points: lm.elbow,
     looks:
       'The classic thick, well-defined plaque with silvery scale on the point of the elbow. Usually symmetrical: if one elbow has it, the other usually does too.',
-    why:
-      'The elbow is an extensor surface: skin stretched tight over a bony joint, bent thousands of times a day, leaned on and knocked. Each small injury can seed a new plaque, which is called the Koebner phenomenon, and this skin has few oil glands, so it is naturally dry.',
+    why: 'The elbow is an extensor surface: skin stretched tight over a bony joint, bent thousands of times a day, leaned on and knocked. Each small injury can seed a new plaque, which is called the Koebner phenomenon, and this skin has few oil glands, so it is naturally dry.',
     care: [
       'A thick ointment at night, covered with a cotton sleeve, roughly doubles absorption',
       'Long sleeves cut the friction from desks and tables that keeps plaques active',
@@ -89,8 +85,7 @@ export const SITES: Site[] = [
     points: lm.lowback,
     looks:
       'A large, stubborn plaque over the sacrum, exactly where waistbands sit and where you lean into chairs. Often one of the thickest plaques on the body.',
-    why:
-      'The sacrum takes pressure and friction every time you sit or lean back, and waistbands rub the same line all day. Skin over the bony sacrum is under constant tension, which is exactly the kind of low-grade injury psoriasis responds to.',
+    why: 'The sacrum takes pressure and friction every time you sit or lean back, and waistbands rub the same line all day. Skin over the bony sacrum is under constant tension, which is exactly the kind of low-grade injury psoriasis responds to.',
     care: [
       'Loose, soft waistbands; nothing that rubs the same line all day',
       'Ask someone to help apply treatment, or use a long-handled applicator',
@@ -109,8 +104,7 @@ export const SITES: Site[] = [
     points: lm.nails,
     looks:
       'Small pits like the surface of a thimble, yellow-brown "oil drop" patches, crumbling, thickening, or the nail lifting off its bed.',
-    why:
-      'The nail is made by skin cells in the matrix under the cuticle, so the same over-production shows up as pits, ridges and crumbling. The nail root is anchored to the tendon of the finger joint, which is why nail disease and psoriatic arthritis travel together.',
+    why: 'The nail is made by skin cells in the matrix under the cuticle, so the same over-production shows up as pits, ridges and crumbling. The nail root is anchored to the tendon of the finger joint, which is why nail disease and psoriatic arthritis travel together.',
     care: [
       'Keep nails short and filed smooth; trauma to the nail makes changes worse',
       'Gloves for washing up, cleaning products and gardening',
@@ -129,8 +123,7 @@ export const SITES: Site[] = [
     points: lm.folds,
     looks:
       'Smooth, shiny, bright red patches with no scale, in the armpits, under the breasts, the groin and the buttock crease. The fold stays moist, so scale never forms. Genital psoriasis is common and rarely mentioned to doctors.',
-    why:
-      'Skin folds are warm, moist and covered, and skin rubs on skin with every movement. Moisture stops scale forming, so patches look smooth and red instead of silvery, and yeast or bacteria can settle on top and worsen it.',
+    why: 'Skin folds are warm, moist and covered, and skin rubs on skin with every movement. Moisture stops scale forming, so patches look smooth and red instead of silvery, and yeast or bacteria can settle on top and worsen it.',
     care: [
       'Gentle wash, pat dry, breathable cotton underwear',
       'Only mild steroids or a calcineurin inhibitor in folds; strong steroids cause stretch marks here',
@@ -148,8 +141,7 @@ export const SITES: Site[] = [
     points: lm.knee,
     looks:
       'Thick plaques over the kneecap, often the most heavily scaled on the body because the knee bends thousands of times a day.',
-    why:
-      'Like the elbow, the kneecap is an extensor surface over a joint that bends constantly, kneels on hard floors and gets knocked. Tight, dry skin plus repeated micro-injury is the perfect invitation for a thick plaque.',
+    why: 'Like the elbow, the kneecap is an extensor surface over a joint that bends constantly, kneels on hard floors and gets knocked. Tight, dry skin plus repeated micro-injury is the perfect invitation for a thick plaque.',
     care: [
       'Ointment under cling film for a few hours softens very thick plaques before treatment',
       'Knee pads for floor work, gardening or prayer',
@@ -167,8 +159,7 @@ export const SITES: Site[] = [
     points: lm.soles,
     looks:
       'Thick, cracked, painful skin or crops of sterile yellow pustules on the palms and soles. A small area of skin with a huge effect on walking and working.',
-    why:
-      'Palms and soles carry the thickest skin on the body and take constant pressure and friction. The pustular form here has its own genetics, around IL-36 signalling, and a strong link with smoking, which is why it can behave differently from plaques elsewhere.',
+    why: 'Palms and soles carry the thickest skin on the body and take constant pressure and friction. The pustular form here has its own genetics, around IL-36 signalling, and a strong link with smoking, which is why it can behave differently from plaques elsewhere.',
     care: [
       'Urea 20 to 40% cream to soften, then a steroid ointment under cotton gloves or socks overnight',
       'Cushioned shoes, and no barefoot walking on hard floors',

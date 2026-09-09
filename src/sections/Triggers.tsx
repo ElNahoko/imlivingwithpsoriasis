@@ -6,7 +6,10 @@ import { Lede, Panel, TipList } from '../components/ui'
 export function Triggers() {
   const active = useStore((s) => s.activeTriggers)
   const toggle = useStore((s) => s.toggleTrigger)
-  const score = Math.min(100, active.reduce((sum, i) => sum + TRIGGERS[i].weight, 0))
+  const score = Math.min(
+    100,
+    active.reduce((sum, i) => sum + TRIGGERS[i].weight, 0),
+  )
   const level = riskLevel(score)
   const topHelp = [...active]
     .sort((a, b) => TRIGGERS[b].weight - TRIGGERS[a].weight)
@@ -83,7 +86,8 @@ export function Triggers() {
         </Panel>
       )}
       <Title order={4} c="dimmed" fz="sm" fw={500}>
-        Weights are drawn from published trigger studies and are meant for reflection, not diagnosis.
+        Weights are drawn from published trigger studies and are meant for reflection, not
+        diagnosis.
       </Title>
     </Stack>
   )

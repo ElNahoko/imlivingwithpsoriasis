@@ -1,113 +1,114 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Box, Card, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { useState } from 'react'
+import { Box, Card, Group, SegmentedControl, Stack, Text, UnstyledButton } from '@mantine/core'
+import { SkinCrossSection } from '../components/SkinCrossSection'
+import { SKIN_LAYERS, TURNOVER_DAYS, type LayerId, type SkinMode } from '../data/skinLayers'
 import { MECHANISM, MECHANISM_TAKEAWAYS } from '../data/clinical'
 import { Lede, NumberedFact, Panel, TipList } from '../components/ui'
 
-/** Skin cells drifting up through the layers: slow on healthy skin, frantic on psoriasis. */
-function SkinLayers({ speed, tone }: { speed: number; tone: 'healthy' | 'psoriasis' }) {
-  const cells = useMemo(
-    () =>
-      Array.from({ length: tone === 'healthy' ? 14 : 26 }, (_, i) => ({
-        left: `${(i / (tone === 'healthy' ? 14 : 26)) * 100}%`,
-        size: 6 + Math.random() * 6,
-        delay: -Math.random() * speed,
-      })),
-    [speed, tone],
-  )
-  return (
-    <Box
-      style={{
-        position: 'relative',
-        height: 78,
-        borderRadius: 8,
-        overflow: 'hidden',
-        background:
-          tone === 'healthy'
-            ? 'linear-gradient(180deg,#F1D9CF,#E4B9AE)'
-            : 'linear-gradient(180deg,#F2B2B4,#D9646B)',
-      }}
-    >
-      {tone === 'psoriasis' && (
-        <Box
-          style={{
-            position: 'absolute',
-            insetInline: 0,
-            top: 0,
-            height: 16,
-            background:
-              'repeating-linear-gradient(90deg,rgba(255,255,255,.85) 0 5px,transparent 5px 10px)',
-          }}
-        />
-      )}
-      {cells.map((cell, i) => (
-        <Box
-          key={i}
-          style={{
-            position: 'absolute',
-            bottom: -12,
-            left: cell.left,
-            width: cell.size,
-            height: cell.size,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,.85)',
-            animation: `rise ${speed}s linear ${cell.delay}s infinite`,
-          }}
-        />
-      ))}
-    </Box>
-  )
-}
-
 export function HowItWorks() {
-  const [day, setDay] = useState(0)
-  useEffect(() => {
-    const id = window.setInterval(() => setDay((d) => (d + 1) % 29), 450)
-    return () => window.clearInterval(id)
-  }, [])
+  const [mode, setMode] = useState<SkinMode>('healthy')
+  const [highlight, setHighlight] = useState<LayerId | null>(null)
+  const selected = SKIN_LAYERS.find((layer) => layer.id === highlight)
+  const psoriatic = mode === 'psoriasis'
 
   return (
     <Stack gap="md">
-      <style>{`@keyframes rise { to { transform: translateY(-100px); } }`}</style>
       <Lede>
-        Healthy skin replaces itself in about a month. In psoriasis, misfiring immune cells order a
-        rebuild every few days. Cells reach the surface still immature and sticky, and pile up
-        instead of shedding.
+        Skin is a production line. Cells are born at the bottom, mature on the way up, flatten, and
+        fall off the top. Psoriasis does not change the line, it changes the speed, and everything
+        downstream goes wrong because of it.
       </Lede>
 
-      <SimpleGrid cols={2} spacing="xs">
-        <Card>
-          <Text tt="uppercase" fw={600} size="xs" c="teal.7">
-            Healthy skin
-          </Text>
-          <Title order={2} ff="Lexend" c="teal.7">
-            {day}
-            <Text span size="sm" c="dimmed" ml={4}>
-              days
-            </Text>
-          </Title>
-          <SkinLayers speed={12} tone="healthy" />
-          <Text size="xs" c="dimmed" mt="xs">
-            About a 28-day cycle, with invisible shedding
-          </Text>
-        </Card>
-        <Card>
-          <Text tt="uppercase" fw={600} size="xs" c="red.7">
-            Psoriasis
-          </Text>
-          <Title order={2} ff="Lexend" c="red.7">
-            {day}
-            <Text span size="sm" c="dimmed" ml={4}>
-              days
-            </Text>
-          </Title>
-          <SkinLayers speed={1.8} tone="psoriasis" />
-          <Text size="xs" c="dimmed" mt="xs">
-            3 to 4 days: immature cells stack up as silvery scale
-          </Text>
-        </Card>
-      </SimpleGrid>
+      <SegmentedControl
+        fullWidth
+        value={mode}
+        onChange={(value) => setMode(value as SkinMode)}
+        data={[
+          { label: 'Healthy skin', value: 'healthy' },
+          { label: 'Psoriasis', value: 'psoriasis' },
+        ]}
+      />
 
-      <Panel title="The chain of events">
+      <Card padding={0} style={{ overflow: 'hidden' }}>
+        <SkinCrossSection mode={mode} highlight={highlight} onHighlight={setHighlight} />
+        <Group justify="space-between" p="sm" wrap="nowrap">
+          <div>
+            <Text size="xs" c="dimmed">
+              Time from birth to shedding
+            </Text>
+            <Group gap={6} align="baseline">
+              <Text ff="Lexend" fw={600} fz={26} c={psoriatic ? 'red.7' : 'teal.7'}>
+                {psoriatic ? '3 to 4' : TURNOVER_DAYS.healthy}
+              </Text>
+              <Text size="sm" c="dimmed">
+                days
+              </Text>
+            </Group>
+          </div>
+          <Text size="xs" c="dimmed" ta="right" maw={230}>
+            {psoriatic
+              ? 'Seven times too fast. Cells arrive at the surface unfinished and cannot let go of each other.'
+              : 'Slow enough for every cell to mature, seal the barrier and shed invisibly.'}
+          </Text>
+        </Group>
+      </Card>
+
+      <Text size="xs" c="dimmed" ta="center" mt={-8}>
+        Drag to look around. Tap a layer to read what it does.
+      </Text>
+
+      <Panel eyebrow="The layers" title={selected ? selected.name : 'Pick a layer'}>
+        {selected ? (
+          <>
+            <Text c="dimmed">{selected.role}</Text>
+            {psoriatic && (
+              <Text c="red.7" size="sm" fw={500} lh={1.5}>
+                {selected.inPsoriasis}
+              </Text>
+            )}
+          </>
+        ) : (
+          <Text c="dimmed">
+            Tap a band in the model, or a colour below, to see what that layer is for and what
+            psoriasis does to it.
+          </Text>
+        )}
+        <Stack gap={4} mt="xs">
+          {[...SKIN_LAYERS].reverse().map((layer) => {
+            const active = highlight === layer.id
+            const thickness = layer.height[mode] / layer.height.healthy
+            return (
+              <UnstyledButton
+                key={layer.id}
+                onClick={() => setHighlight(active ? null : layer.id)}
+                p={6}
+                style={{
+                  borderRadius: 8,
+                  background: active ? 'var(--mantine-color-green-0)' : undefined,
+                }}
+              >
+                <Group gap="xs" wrap="nowrap">
+                  <Box
+                    w={14}
+                    h={14}
+                    style={{ borderRadius: 4, background: layer.color, flex: 'none' }}
+                  />
+                  <Text size="sm" fw={active ? 600 : 400} style={{ flex: 1 }}>
+                    {layer.name}
+                  </Text>
+                  {layer.id !== 'dermis' && thickness !== 1 && (
+                    <Text size="xs" c={thickness > 1 ? 'red.7' : 'dimmed'} fw={500}>
+                      {thickness > 1 ? `${thickness.toFixed(1)}× thicker` : 'nearly gone'}
+                    </Text>
+                  )}
+                </Group>
+              </UnstyledButton>
+            )
+          })}
+        </Stack>
+      </Panel>
+
+      <Panel title="What is actually going wrong">
         <Stack gap="sm">
           {MECHANISM.map(([title, body], i) => (
             <NumberedFact key={title} index={i + 1} title={title}>

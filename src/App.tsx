@@ -122,7 +122,13 @@ export function App() {
         </Paper>
       )}
 
-      <Modal opened={helpOpen} onClose={help.close} title="Moving around the body" radius="lg" centered>
+      <Modal
+        opened={helpOpen}
+        onClose={help.close}
+        title="Moving around the body"
+        radius="lg"
+        centered
+      >
         <Stack gap="sm">
           {CONTROLS.map(([what, how]) => (
             <Group key={what} justify="space-between">
@@ -134,7 +140,12 @@ export function App() {
           ))}
           <Text size="xs" c="dimmed" mt="sm">
             Body model:{' '}
-            <Anchor href="http://www.makehumancommunity.org/" target="_blank" rel="noopener noreferrer" inherit>
+            <Anchor
+              href="http://www.makehumancommunity.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              inherit
+            >
               MakeHuman
             </Anchor>{' '}
             base mesh, CC0. This app is an educational guide and not medical advice.

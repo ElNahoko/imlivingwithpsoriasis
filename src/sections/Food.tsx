@@ -1,11 +1,26 @@
 import { useMemo, useState } from 'react'
 import {
-  Box, Card, Chip, Collapse, Group, SegmentedControl, Stack, Text, TextInput, Title,
+  Box,
+  Card,
+  Chip,
+  Collapse,
+  Group,
+  SegmentedControl,
+  Stack,
+  Text,
+  TextInput,
+  Title,
 } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import {
-  CATEGORY_LABELS, FOODS, RHYTHM, SWAPS, VERDICT_COLORS, VERDICT_LABELS,
-  type FoodCategory, type Verdict,
+  CATEGORY_LABELS,
+  FOODS,
+  RHYTHM,
+  SWAPS,
+  VERDICT_COLORS,
+  VERDICT_LABELS,
+  type FoodCategory,
+  type Verdict,
 } from '../data/foods'
 import { Lede, Panel } from '../components/ui'
 
@@ -82,7 +97,13 @@ export function Food() {
             {PLATE.map((row) => (
               <Group key={row.label} gap="xs" wrap="nowrap">
                 <Box
-                  style={{ width: 12, height: 12, borderRadius: 3, background: row.color, flex: 'none' }}
+                  style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: 3,
+                    background: row.color,
+                    flex: 'none',
+                  }}
                 />
                 <Text size="sm">{row.label}</Text>
               </Group>
@@ -124,7 +145,13 @@ export function Food() {
       {visible.length === 0 ? (
         <Text c="dimmed">Nothing matches. Try “fish”, “sugar” or “cheese”.</Text>
       ) : (
-        <Box style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 8 }}>
+        <Box
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))',
+            gap: 8,
+          }}
+        >
           {visible.map((food) => (
             <FoodCard key={food.name} food={food} />
           ))}

@@ -4,6 +4,7 @@ import { ContactShadows, Decal, Html, OrbitControls, useGLTF } from '@react-thre
 import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { SITES, type Site, type SiteId } from '../data/sites'
+import { between, createRandom } from '../lib/random'
 import { useStore } from '../store'
 
 const BRAND = new THREE.Color('#1B8A5A')
@@ -24,7 +25,8 @@ function usePlaqueTexture() {
     canvas.width = canvas.height = size
     const ctx = canvas.getContext('2d')!
     const c = size / 2
-    const rand = (a: number, b: number) => a + Math.random() * (b - a)
+    const random = createRandom(0xb10c)
+    const rand = (a: number, b: number) => between(random, a, b)
 
     for (let i = 0; i < 9; i++) {
       const r = rand(size * 0.16, size * 0.3)
@@ -40,11 +42,19 @@ function usePlaqueTexture() {
       ctx.fill()
     }
     for (let i = 0; i < 120; i++) {
-      const a = Math.random() * Math.PI * 2
-      const d = Math.pow(Math.random(), 0.6) * size * 0.26
+      const a = random() * Math.PI * 2
+      const d = Math.pow(random(), 0.6) * size * 0.26
       ctx.fillStyle = `rgba(255,255,255,${rand(0.35, 0.8)})`
       ctx.beginPath()
-      ctx.ellipse(c + Math.cos(a) * d, c + Math.sin(a) * d, rand(1.5, 5), rand(1, 3), a, 0, Math.PI * 2)
+      ctx.ellipse(
+        c + Math.cos(a) * d,
+        c + Math.sin(a) * d,
+        rand(1.5, 5),
+        rand(1, 3),
+        a,
+        0,
+        Math.PI * 2,
+      )
       ctx.fill()
     }
     const tex = new THREE.CanvasTexture(canvas)
@@ -60,7 +70,14 @@ function useScanTexture() {
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = size
     const ctx = canvas.getContext('2d')!
-    const g = ctx.createRadialGradient(size / 2, size / 2, size * 0.3, size / 2, size / 2, size * 0.5)
+    const g = ctx.createRadialGradient(
+      size / 2,
+      size / 2,
+      size * 0.3,
+      size / 2,
+      size / 2,
+      size * 0.5,
+    )
     g.addColorStop(0, 'rgba(27,138,90,0)')
     g.addColorStop(0.62, 'rgba(27,138,90,0)')
     g.addColorStop(0.74, 'rgba(27,138,90,.5)')
@@ -209,10 +226,7 @@ function Body({ onHover }: { onHover: (id: SiteId | null) => void }) {
     return found as unknown as THREE.BufferGeometry
   }, [scene])
 
-  const markers = useMemo(
-    () => SITES.map((site) => ({ site, markers: markersFor(site) })),
-    [],
-  )
+  const markers = useMemo(() => SITES.map((site) => ({ site, markers: markersFor(site) })), [])
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
@@ -307,15 +321,17 @@ function CameraRig({ compact }: { compact: boolean }) {
   const controls = useRef<OrbitControlsImpl>(null)
   const selectedSite = useStore((s) => s.selectedSite)
   const target = useRef<{ position: THREE.Vector3; look: THREE.Vector3 } | null>(null)
-  const [idle, setIdle] = useState(true)
-  const [flying, setFlying] = useState(true)
+  // Kept in refs, not state: these change inside the animation loop, and a
+  // re-render per frame would be wasteful and would fight the loop.
+  const flying = useRef(true)
+  const lastInteraction = useRef(0)
 
   useEffect(() => {
     const home = {
       position: spherical(compact ? 5.6 : HOME.distance, HOME.yaw, HOME.pitch, HOME.height),
       look: new THREE.Vector3(0, HOME.height, 0),
     }
-    setFlying(true)
+    flying.current = true
     if (!selectedSite) {
       target.current = home
       return
@@ -340,14 +356,21 @@ function CameraRig({ compact }: { compact: boolean }) {
 
   useFrame((_, delta) => {
     const c = controls.current
-    if (!c || !target.current) return
+    if (!c) return
+
+    // Spin slowly only once the person has stopped touching it, and never
+    // while a flight to a site is still in progress.
+    const settled = performance.now() - lastInteraction.current > 4000
+    c.autoRotate = settled && !selectedSite && !flying.current
+
+    if (!target.current) return
     const k = 1 - Math.pow(0.0016, Math.min(delta, 0.05))
     c.object.position.lerp(target.current.position, k)
     c.target.lerp(target.current.look, k)
     c.update()
     if (c.object.position.distanceTo(target.current.position) < 0.01) {
       target.current = null
-      setFlying(false)
+      flying.current = false
     }
   })
 
@@ -363,15 +386,14 @@ function CameraRig({ compact }: { compact: boolean }) {
       maxDistance={6}
       minPolarAngle={0.5}
       maxPolarAngle={Math.PI / 2 + 0.35}
-      autoRotate={idle && !selectedSite && !flying}
       autoRotateSpeed={0.35}
       onStart={() => {
         target.current = null
-        setFlying(false)
-        setIdle(false)
+        flying.current = false
+        lastInteraction.current = performance.now()
       }}
       onEnd={() => {
-        window.setTimeout(() => setIdle(true), 4000)
+        lastInteraction.current = performance.now()
       }}
     />
   )
@@ -391,7 +413,13 @@ export function BodyScene({ compact }: { compact: boolean }) {
       onPointerMissed={() => closePanel()}
     >
       <hemisphereLight intensity={1.15} groundColor="#C7D4E2" />
-      <directionalLight position={[2.2, 3.6, 2.6]} intensity={2.4} castShadow shadow-mapSize={[2048, 2048]} shadow-bias={-0.0004} />
+      <directionalLight
+        position={[2.2, 3.6, 2.6]}
+        intensity={2.4}
+        castShadow
+        shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0004}
+      />
       <directionalLight position={[-3, 2, 1.5]} intensity={0.9} color="#DCE9FF" />
       <directionalLight position={[0, 2.6, -3.2]} intensity={1.3} />
       <Suspense fallback={null}>

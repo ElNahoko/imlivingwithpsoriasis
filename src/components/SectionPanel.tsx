@@ -8,9 +8,7 @@ export function SectionPanel({ compact }: { compact: boolean }) {
   const close = useStore((s) => s.closePanel)
   const section = id ? sectionById(id) : null
 
-  const body = section ? (
-    <section.Component />
-  ) : null
+  const body = section ? <section.Component /> : null
 
   if (compact) {
     return (

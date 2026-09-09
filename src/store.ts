@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { SiteId } from './data/sites'
 import type { SectionId } from './sections/registry'
+import { dayKey } from './lib/dates'
 
 export type DiaryEntry = {
   itch: number
@@ -10,7 +11,7 @@ export type DiaryEntry = {
   note: string
 }
 
-export const todayKey = () => new Date().toISOString().slice(0, 10)
+export const todayKey = () => dayKey()
 
 type State = {
   /** section currently open in the side panel, null when the panel is closed */
