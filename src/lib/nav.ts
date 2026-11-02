@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from 'react'
 import { SITE } from '../data/site'
 import { fullTitle, type PageMeta } from '../data/seo'
+import { langFromPath } from '../data/i18n'
 
 // ponytail: a handful of flat routes needs pathname + history, not a router
 // library. Reach for one when routes get params or nesting.
@@ -26,6 +27,7 @@ export function usePageMeta(meta: PageMeta, path: string) {
     const title = fullTitle(meta.title)
     const url = SITE.url + path
     document.title = title
+    document.documentElement.lang = langFromPath(path)
     const set = (selector: string, attr: string, value: string) =>
       document.head.querySelector(selector)?.setAttribute(attr, value)
     set('meta[name="description"]', 'content', meta.description)

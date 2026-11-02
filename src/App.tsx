@@ -2,7 +2,8 @@ import { Button, Container, Stack, Text, Title } from '@mantine/core'
 import { Guide } from './Guide'
 import { Link } from './lib/router'
 import { usePageMeta, usePath } from './lib/nav'
-import { articleFromPath, metaFor } from './data/seo'
+import { articleFromPath, isBlogIndex, metaFor } from './data/seo'
+import { langFromPath } from './data/i18n'
 import { SiteLayout } from './pages/SiteLayout'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
@@ -15,7 +16,6 @@ import { FoodPage } from './pages/FoodPage'
 const PAGES: Record<string, () => React.JSX.Element> = {
   '/': Home,
   '/about': About,
-  '/blog': Blog,
   '/food': FoodPage,
   '/contact': Contact,
   '/privacy': () => <Legal path="/privacy" />,
@@ -47,9 +47,18 @@ export function App() {
   if (path === '/guide') return <Guide />
   const Page = PAGES[path]
   const article = articleFromPath(path)
+  const lang = langFromPath(path)
   return (
     <SiteLayout>
-      {Page ? <Page /> : article ? <ArticlePage article={article} /> : <NotFound />}
+      {Page ? (
+        <Page />
+      ) : article ? (
+        <ArticlePage key={path} article={article} lang={lang} />
+      ) : isBlogIndex(path) ? (
+        <Blog lang={lang} />
+      ) : (
+        <NotFound />
+      )}
     </SiteLayout>
   )
 }

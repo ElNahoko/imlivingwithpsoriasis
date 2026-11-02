@@ -1,5 +1,6 @@
 // Imports keep their .ts extension: the build script reads this file with Node.
 import { ARTICLES } from './articles.ts'
+import { LANGS, UI, blogPath, langFromPath, localize } from './i18n.ts'
 import { SITE } from './site.ts'
 
 export type PageMeta = { title: string; description: string }
@@ -20,11 +21,6 @@ export const PAGES_META: Record<string, PageMeta> = {
     title: 'Food and psoriasis: what to eat and what to limit',
     description:
       'Over 60 foods rated for psoriasis with the reason for each, based on dermatology dietary recommendations and the Mediterranean diet research.',
-  },
-  '/blog': {
-    title: 'Psoriasis articles',
-    description:
-      'Plain-language articles on psoriasis: types, treatments, skin care, food, stress and talking about it, each with its sources.',
   },
   '/about': {
     title: 'About',
@@ -55,12 +51,22 @@ export const NOT_FOUND: PageMeta = {
 export const fullTitle = (title: string) =>
   title ? `${title} | ${SITE.name}` : `${SITE.name}: an interactive guide to psoriasis`
 
-export const articleFromPath = (path: string) =>
-  path.startsWith('/blog/') ? ARTICLES.find((a) => `/blog/${a.slug}` === path) : undefined
+/** The article at /blog/<slug> or /<lang>/blog/<slug>, in that language. */
+export function articleFromPath(path: string) {
+  const lang = langFromPath(path)
+  const article = ARTICLES.find((a) => blogPath(lang, a.slug) === path)
+  return article && localize(article, lang)
+}
+
+/** The blog index in each language: /blog, /fr/blog, … */
+export const isBlogIndex = (path: string) => LANGS.some((l) => blogPath(l) === path)
 
 export function metaFor(path: string): PageMeta {
   const article = articleFromPath(path)
-  return article
-    ? { title: article.title, description: article.description }
-    : (PAGES_META[path] ?? NOT_FOUND)
+  if (article) return { title: article.title, description: article.description }
+  if (isBlogIndex(path)) {
+    const ui = UI[langFromPath(path)]
+    return { title: ui.blogMetaTitle, description: ui.blogMetaDescription }
+  }
+  return PAGES_META[path] ?? NOT_FOUND
 }

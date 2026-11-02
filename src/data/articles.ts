@@ -6,6 +6,17 @@ export type ArticleCategory =
 
 export type Ref = { label: string; url: string }
 
+/** An openly licensed cover photo from Wikimedia Commons, credited under the article. */
+export type ArticleImage = {
+  alt: string
+  author: string
+  license: string
+  licenseUrl: string | null
+  source: string
+  width: number
+  height: number
+}
+
 export type Article = {
   slug: string
   title: string
@@ -16,8 +27,18 @@ export type Article = {
   guide?: string
   guideLabel?: string
   refs: Ref[]
+  /** served from /blog/<slug>.jpg, with a smaller /blog/<slug>-800.jpg for cards */
+  image?: ArticleImage
+  /** three short points shown in a box at the top of the article */
+  takeaways: string[]
   /** paragraphs separated by blank lines; "## " starts a heading, "- " a list item */
   body: string
+}
+
+/** The parts of an article that are translated; slugs, dates and sources stay shared. */
+export type ArticleText = Pick<Article, 'title' | 'description' | 'takeaways' | 'body'> & {
+  guideLabel?: string
+  imageAlt?: string
 }
 
 export const ARTICLE_CATEGORIES: ArticleCategory[] = [
@@ -107,6 +128,20 @@ export const ARTICLES: Article[] = [
     guide: 'how',
     guideLabel: 'See the skin rebuild in 3D',
     refs: [REF.lancet, REF.who, REF.comorbid],
+    image: {
+      alt: 'Two shins covered in raised red patches of plaque psoriasis with silvery scale.',
+      author: 'Drb206',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Psoriasis_on_Human_shins.jpg',
+      width: 1600,
+      height: 1200,
+    },
+    takeaways: [
+      'Psoriasis is an immune condition: skin cells are made in days instead of about four weeks.',
+      'Genes set the stage, and triggers such as infection, injury or stress set it off.',
+      'It is linked with joint, heart and mood problems, so treating it well protects the whole body.',
+    ],
     body: `
 Psoriasis is not a skin infection, an allergy, or a sign of poor hygiene. It is a long-term condition of the immune system that shows up most visibly on the skin.
 
@@ -148,6 +183,20 @@ It is not contagious. You cannot catch it from touching someone, sharing a towel
     guide: 'types',
     guideLabel: 'Compare the types in the guide',
     refs: [REF.npf, REF.aad, REF.nhs],
+    image: {
+      alt: 'A back dotted with many small, red, drop-shaped spots of guttate psoriasis.',
+      author: 'LadyZatar',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Psoriasis_en_gouttes_dos.jpg',
+      width: 1399,
+      height: 1600,
+    },
+    takeaways: [
+      'Plaque psoriasis is by far the most common type, but there are four others.',
+      'Guttate psoriasis often follows a strep throat; inverse psoriasis hides in skin folds.',
+      'Widespread redness, spreading pustules or fever with a flare need same-day care.',
+    ],
     body: `
 Psoriasis is one condition with several faces. Knowing which type you have helps you and your doctor choose the right treatment, and some people have more than one type at once.
 
@@ -190,6 +239,20 @@ These need same-day medical care. For everything else, a photo diary of how your
     guide: 'myths',
     guideLabel: 'Test yourself with the myth check',
     refs: [REF.npf, REF.nhs, REF.who],
+    image: {
+      alt: 'Two people holding hands as they walk along a sunny pavement.',
+      author: 'Crew',
+      license: 'CC0',
+      licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+      source: 'https://commons.wikimedia.org/wiki/File:Crew_2016-01-10_(Unsplash_xCmvrpzctaQ).jpg',
+      width: 1600,
+      height: 1068,
+    },
+    takeaways: [
+      'Psoriasis is caused by your own immune system, not a germ, so it cannot be caught.',
+      'New patches after a scratch or a strep throat are your own immune response, not spread.',
+      'A short, calm explanation is usually the easiest way to answer the question.',
+    ],
     body: `
 It is one of the most common questions people with psoriasis hear, and one of the most hurtful. The answer is simple: psoriasis is not contagious.
 
@@ -224,6 +287,20 @@ If you are a parent, letting your child's school know, with a short note from yo
     guide: 'living',
     guideLabel: 'See the whole-body checks',
     refs: [REF.nhsPsa, REF.nice, REF.comorbid],
+    image: {
+      alt: "An older person's hand gently rubbing the knuckles of the other hand.",
+      author: 'Ian Furst',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Arthritic_hands_in_pain.jpg',
+      width: 1600,
+      height: 900,
+    },
+    takeaways: [
+      'Up to about one in three people with psoriasis develop psoriatic arthritis.',
+      'Morning stiffness, a swollen finger or toe, heel pain and nail changes are early signs.',
+      'Early treatment protects joints, so ask to be screened at least once a year.',
+    ],
     body: `
 Psoriatic arthritis is inflammation of the joints and the places where tendons attach to bone. It affects up to about one in three people with psoriasis, usually years after the skin first appears, though occasionally before.
 
@@ -262,6 +339,20 @@ Joint pain is easy to dismiss as getting older or overdoing it at the gym. With 
     guide: 'body',
     guideLabel: 'Explore where it appears',
     refs: [REF.aad, REF.npf],
+    image: {
+      alt: 'Dark brown and purplish patches of psoriasis on the lower leg of a person with Black skin.',
+      author: 'TealComet',
+      license: 'CC0',
+      licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+      source: 'https://commons.wikimedia.org/wiki/File:Psoriasis_black_skin_leg.jpg',
+      width: 1600,
+      height: 799,
+    },
+    takeaways: [
+      'On brown and Black skin, plaques are often purple, grey or dark brown rather than red.',
+      'Darker or lighter marks after clearing are common and usually fade over months.',
+      'Describe how your skin feels and bring daylight photos so it is not underestimated.',
+    ],
     body: `
 Most textbook photos of psoriasis show pink or red plaques on light skin. On darker skin it can look quite different, which means it is sometimes recognised late or its severity is underestimated.
 
@@ -298,6 +389,20 @@ The treatments are the same on every skin tone. Some, such as coal tar or strong
     guide: 'treatments',
     guideLabel: 'See the treatment ladder',
     refs: [REF.nice, REF.aadGuide, REF.lancet],
+    image: {
+      alt: 'Blister packs of tablets, a jar of capsules and a small medicine bottle on a white table.',
+      author: 'BuhaM',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Pills_and_medicines_02.jpg',
+      width: 1600,
+      height: 1172,
+    },
+    takeaways: [
+      'Treatment steps up from creams to light therapy, tablets and biologics.',
+      'Each step is chosen by how much psoriasis affects your life, not just how much skin it covers.',
+      'If creams have not worked after a fair trial, ask about the next step.',
+    ],
     body: `
 There is no cure for psoriasis yet, but there are more effective treatments than ever. Most guidelines use a stepped approach: start with what is simplest and safest, and move up if it is not enough.
 
@@ -342,6 +447,20 @@ How much psoriasis affects your life counts as much as how much skin it covers. 
     guide: 'treatments',
     guideLabel: 'Open treatments in the guide',
     refs: [REF.nice, REF.aad],
+    image: {
+      alt: 'A small line of white cream squeezed onto a fingertip over a bathroom sink.',
+      author: 'Shawn Campbell',
+      license: 'CC BY 2.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/2.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Moisturizer.jpg',
+      width: 1280,
+      height: 960,
+    },
+    takeaways: [
+      'Use enough: one fingertip unit covers an area the size of two adult palms.',
+      'Match the strength to the area: stronger on thick plaques, milder on the face and folds.',
+      'Planned breaks between courses prevent most side effects.',
+    ],
     body: `
 Steroid creams and ointments are the most widely used treatment for psoriasis. Many people under-use them out of fear of side effects, and then they do not work. Used well, they are effective and safe.
 
@@ -379,6 +498,21 @@ Thinning skin, stretch marks, easy bruising or small visible blood vessels where
     guide: 'treatments',
     guideLabel: 'Where phototherapy fits',
     refs: [REF.nice, REF.aadGuide],
+    image: {
+      alt: 'A tall stand-up phototherapy cabinet in a clinic treatment room.',
+      author: 'DMontagne en résidence',
+      license: 'CC BY 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/4.0',
+      source:
+        'https://commons.wikimedia.org/wiki/File:S%C3%A9ance_en_cabine_de_phototh%C3%A9rapie.jpg',
+      width: 1200,
+      height: 1600,
+    },
+    takeaways: [
+      'Narrowband UVB is given in clinic two or three times a week for several weeks.',
+      'Improvement usually starts after a few weeks; mild redness is the most common side effect.',
+      'Sunbeds are not a substitute: they give the wrong kind of light, undosed.',
+    ],
     body: `
 Many people notice their psoriasis improves in summer. Phototherapy uses that effect in a controlled, measured way.
 
@@ -420,6 +554,20 @@ The practical challenge is time: getting to clinic two or three times a week. If
     guide: 'doctor',
     guideLabel: 'Build your appointment checklist',
     refs: [REF.aadGuide, REF.nice, REF.lancet],
+    image: {
+      alt: 'A single-use prefilled biologic syringe lying on a white surface.',
+      author: 'Raimond Spekking',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Syringe_with_Certolizumab_pegol-1803.jpg',
+      width: 1600,
+      height: 900,
+    },
+    takeaways: [
+      'Biologics block one immune messenger and often bring clear or nearly clear skin.',
+      'You will be screened for infections such as tuberculosis before you start.',
+      'The full effect is judged at around three to four months; switching often helps if one fails.',
+    ],
     body: `
 Biologics are medicines made from living cells that block one specific messenger in the immune system. For many people with moderate to severe psoriasis, they bring skin that is clear or nearly clear.
 
@@ -465,6 +613,20 @@ Most people on biologics live normal lives. Keep a note of when you inject, stor
     guide: 'body',
     guideLabel: 'See the scalp in 3D',
     refs: [REF.aad, REF.nice, REF.nhs],
+    image: {
+      alt: 'A hairbrush, a bottle of shampoo and a folded towel laid out on a wooden surface.',
+      author: 'geehairimages',
+      license: 'CC BY 2.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/2.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Washing_Your_Hair_-_50888046541.jpg',
+      width: 1600,
+      height: 1067,
+    },
+    takeaways: [
+      'Soften the scale first, or treatments cannot reach the skin.',
+      'Leave medicated shampoo on for about five minutes before rinsing.',
+      'Hair loss from scalp psoriasis is usually temporary; picking and scratching make it worse.',
+    ],
     body: `
 The scalp is one of the most common and most frustrating places for psoriasis. Hair traps the scale, treatments are messy, and flakes on dark clothing can feel very public.
 
@@ -502,6 +664,20 @@ If scale stays thick or painful after a few weeks of a consistent routine, or ha
     guide: 'habits',
     guideLabel: 'Build a daily routine',
     refs: [REF.nice, REF.aad, REF.nhs],
+    image: {
+      alt: 'Hands squeezing moisturising cream from a tube onto the back of a hand against a yellow background.',
+      author: 'Moose Photos',
+      license: 'CC0',
+      licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+      source: 'https://commons.wikimedia.org/wiki/File:Woman_applying_cream_to_hand.jpg',
+      width: 1600,
+      height: 1068,
+    },
+    takeaways: [
+      'Emollients make every other psoriasis treatment work better.',
+      'The best moment to apply is within minutes of washing, while skin is still damp.',
+      'Use them generously, and leave about 30 minutes before an active treatment.',
+    ],
     body: `
 Moisturisers, often called emollients, do not cure psoriasis, but they make every other treatment work better. Dry skin cracks, itches and is more easily injured, and injury can trigger new plaques.
 
@@ -547,6 +723,21 @@ A small pot at your desk, in your bag and by the bed makes it much easier to kee
     guide: 'triggers',
     guideLabel: 'Check your flare triggers',
     refs: [REF.aad, REF.npf, REF.nhs],
+    image: {
+      alt: 'A snow-covered path through a birch forest on a bright, cold winter day.',
+      author: 'W.carter',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source:
+        'https://commons.wikimedia.org/wiki/File:Snowy_path_in_the_forest_near_Brastad_Arena.jpg',
+      width: 1400,
+      height: 934,
+    },
+    takeaways: [
+      'Less sunlight, dry air, infections and holiday habits all push psoriasis in winter.',
+      'Moisturise more, keep showers lukewarm and treat sore throats promptly.',
+      'If you flare every winter, plan with your dermatologist in autumn.',
+    ],
     body: `
 Many people find their psoriasis is at its worst from late autumn to early spring. Several things change at once.
 
@@ -585,6 +776,20 @@ A skin diary over a full year shows your own pattern, which is often more useful
     guide: 'body',
     guideLabel: 'See nails in the body map',
     refs: [REF.aad, REF.nice, REF.nhsPsa],
+    image: {
+      alt: 'Feet in flip-flops showing thickened, discoloured toenails affected by nail psoriasis.',
+      author: 'JVO27',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:NailPsoriasis.JPG',
+      width: 1400,
+      height: 1050,
+    },
+    takeaways: [
+      'About half of people with psoriasis have nail changes such as pits or lifting.',
+      'Nail psoriasis is strongly linked with psoriatic arthritis, so mention any joint pain too.',
+      'Nails grow slowly: judge a treatment after around six months.',
+    ],
     body: `
 Nail psoriasis is common and often overlooked. It can be painful, make fine tasks harder, and is a useful signal about the joints.
 
@@ -630,6 +835,20 @@ Nails grow slowly, so expect around six months before you can judge whether a tr
     guide: 'food',
     guideLabel: 'Browse the food guide',
     refs: [REF.diet, REF.med, REF.weight],
+    image: {
+      alt: 'A market stall piled high with broccoli, yellow peppers and red peppers.',
+      author: 'Vardhanjp',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Colourful_vegetables_Mumbai_market.jpg',
+      width: 1600,
+      height: 900,
+    },
+    takeaways: [
+      'No food causes or cures psoriasis, but weight loss has the strongest evidence.',
+      'A Mediterranean pattern is linked with milder psoriasis and protects the heart.',
+      'Gluten-free diets and supplements only help if you have a proven need.',
+    ],
     body: `
 Food is one of the most searched topics for people with psoriasis, and one of the most crowded with myths. Here is what the evidence actually supports.
 
@@ -674,6 +893,20 @@ Diet supports treatment; it does not replace it. Be wary of anyone selling a die
     guide: 'food',
     guideLabel: 'See every food explained',
     refs: [REF.med, REF.diet],
+    image: {
+      alt: 'A table laden with oranges, apples, tomatoes, bread, olive oil and wine in a Mediterranean spread.',
+      author: 'G.steph.rocket',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source: 'https://commons.wikimedia.org/wiki/File:DIETA_MEDITERRANEA_ITALIA.JPG',
+      width: 1600,
+      height: 1110,
+    },
+    takeaways: [
+      'Mostly plants, olive oil as the main fat, fish often and red meat rarely.',
+      'Simple swaps, such as nuts for crisps, add up over a week.',
+      'A pattern you can keep matters more than a perfect week.',
+    ],
     body: `
 The Mediterranean way of eating is not a strict diet. It is a pattern: mostly plants, olive oil as the main fat, fish often, meat rarely. This is one way to put it on the table without special ingredients.
 
@@ -725,6 +958,20 @@ Change one thing at a time. A pattern you can keep matters far more than a perfe
     guide: 'triggers',
     guideLabel: 'See how alcohol scores as a trigger',
     refs: [REF.diet, REF.nice, REF.comorbid],
+    image: {
+      alt: "Red wine being poured from a bottle into a glass held in someone's hand.",
+      author: 'Fabio Ingrosso',
+      license: 'CC BY 2.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/2.0',
+      source: 'https://commons.wikimedia.org/wiki/File:Wine_being_poured_into_a_glass.jpg',
+      width: 1600,
+      height: 1064,
+    },
+    takeaways: [
+      'Heavier drinking is linked with more severe psoriasis and weaker treatment response.',
+      'Alcohol is risky with methotrexate and acitretin; ask your doctor for your limit.',
+      'Alcohol-free days and swaps are the easiest place to start.',
+    ],
     body: `
 Alcohol is one of the lifestyle factors most consistently linked with psoriasis. It is also one of the easier ones to change.
 
@@ -761,6 +1008,20 @@ If cutting down is hard, that is common, and help is available through your doct
     guide: 'triggers',
     guideLabel: 'See your trigger score',
     refs: [REF.smoking, REF.comorbid, REF.nhs],
+    image: {
+      alt: 'A lit cigarette resting in a white ashtray against a black background.',
+      author: 'Tomasz Sienicki',
+      license: 'CC BY 2.5',
+      licenseUrl: 'https://creativecommons.org/licenses/by/2.5',
+      source: 'https://commons.wikimedia.org/wiki/File:Cigarette_in_white_ashtray.jpg',
+      width: 1178,
+      height: 970,
+    },
+    takeaways: [
+      'Smokers are more likely to develop psoriasis and to have more severe disease.',
+      'Pustular psoriasis on the hands and feet is very strongly linked with smoking.',
+      'Stop-smoking services and nicotine replacement greatly improve your chances of quitting.',
+    ],
     body: `
 Of all the lifestyle factors linked with psoriasis, smoking has some of the clearest evidence.
 
@@ -799,6 +1060,21 @@ Most people try several times before they stop for good. A lapse is not failure;
     guide: 'habits',
     guideLabel: 'Start small daily habits',
     refs: [REF.weight, REF.diet, REF.comorbid],
+    image: {
+      alt: 'A jogger seen from behind running along a park path in golden morning mist.',
+      author: 'John Robert McPherson',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
+      source:
+        'https://commons.wikimedia.org/wiki/File:Jogger_in_morning_mist_7th_Brigade_Park_Chermside_P1060534.jpg',
+      width: 1600,
+      height: 1200,
+    },
+    takeaways: [
+      'Fat tissue releases inflammatory signals that also drive psoriasis.',
+      'A clinical trial showed weight loss made psoriasis less severe.',
+      'Small, sustainable changes count; the barriers psoriasis creates are real.',
+    ],
     body: `
 Talking about weight can feel loaded, and nobody with psoriasis needs more blame. But the link between weight and psoriasis is biological, and understanding it can be useful.
 
@@ -838,6 +1114,20 @@ Psoriasis itself can make exercise harder: painful skin, sore joints, feeling se
     guide: 'stress',
     guideLabel: 'Try the breathing exercise',
     refs: [REF.stress, REF.mood, REF.nice],
+    image: {
+      alt: 'Still lake water reflecting forested mountains and clouds on a calm morning.',
+      author: 'Extemporalist',
+      license: 'CC0',
+      licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+      source: 'https://commons.wikimedia.org/wiki/File:Calm_Morning_at_Diana_Lake.webp',
+      width: 1600,
+      height: 1203,
+    },
+    takeaways: [
+      'Stress can trigger flares, and flares cause stress: a loop worth breaking.',
+      'Slow breathing, movement, sleep and talking therapies all help.',
+      'Low mood for more than a couple of weeks is worth raising with your doctor.',
+    ],
     body: `
 Many people notice their psoriasis flares after a stressful period. A review of the research supports this: psychological stress is linked with psoriasis starting and with it getting worse.
 
@@ -878,6 +1168,20 @@ Depression and anxiety are more common with psoriasis. If you have felt low, hop
     guide: 'doctor',
     guideLabel: 'Prepare for your next visit',
     refs: [REF.who, REF.nice, REF.mood],
+    image: {
+      alt: "Two people's hands around cups of coffee on a round marble café table.",
+      author: 'Joshua Ness',
+      license: 'CC0',
+      licenseUrl: 'http://creativecommons.org/publicdomain/zero/1.0/deed.en',
+      source: 'https://commons.wikimedia.org/wiki/File:Coffee_Talks_(Unsplash).jpg',
+      width: 1600,
+      height: 1068,
+    },
+    takeaways: [
+      'Explaining early can take the pressure off with a partner.',
+      'You do not have to tell your employer, but adjustments can help.',
+      'Tell your doctor how psoriasis affects your life, not just where it is.',
+    ],
     body: `
 Psoriasis is visible, but it is rarely talked about. Finding words for it can make life easier in relationships, at work and in the consulting room.
 
@@ -933,8 +1237,8 @@ export function parseBody(body: string): Block[] {
 export const readingMinutes = (a: Article) =>
   Math.max(2, Math.round(a.body.split(/\s+/).length / 200))
 
-export const formatDate = (iso: string) =>
-  new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', {
+export const formatDate = (iso: string, locale = 'en-GB') =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

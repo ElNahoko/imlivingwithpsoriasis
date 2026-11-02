@@ -34,4 +34,9 @@ export default tseslint.config(
     files: ['src/components/BodyScene.tsx', 'src/components/SkinCrossSection.tsx'],
     rules: { 'react-hooks/immutability': 'off' },
   },
+  {
+    // French typography puts a narrow no-break space before : ; ? ! and inside « ».
+    files: ['src/data/i18n/**'],
+    rules: { 'no-irregular-whitespace': ['error', { skipTemplates: true }] },
+  },
 )

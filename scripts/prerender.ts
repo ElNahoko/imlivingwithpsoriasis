@@ -1,31 +1,24 @@
 // Runs after `vite build`. Writes one HTML file per page with its own title,
-// description, canonical URL, link-preview tags, JSON-LD and readable content,
-// so search engines and AI crawlers see every page without running JavaScript.
-// Also writes sitemap.xml and llms.txt. The React app replaces the static
-// content as soon as it mounts.
+// description, canonical URL, language links, link-preview tags, JSON-LD and
+// readable content, so search engines and AI crawlers see every page without
+// running JavaScript. Also writes sitemap.xml and llms.txt. The React app
+// replaces the static content as soon as it mounts.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { ARTICLES, parseBody, type Article } from '../src/data/articles.ts'
 import { FOODS, VERDICT_LABELS } from '../src/data/foods.ts'
+import { LANGS, UI, blogPath, loadLang, localize, type Lang } from '../src/data/i18n.ts'
 import { PAGES_META, fullTitle } from '../src/data/seo.ts'
 import { SITE } from '../src/data/site.ts'
 
 const dist = join(import.meta.dirname, '..', 'dist')
 const template = readFileSync(join(dist, 'index.html'), 'utf8')
+for (const lang of LANGS) await loadLang(lang)
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 const url = (path: string) => SITE.url + path
-
-const NAV = [
-  ['/', 'Home'],
-  ['/guide', '3D body guide'],
-  ['/food', 'Food guide'],
-  ['/blog', 'Articles'],
-  ['/about', 'About'],
-  ['/contact', 'Contact'],
-]
 
 const PSORIASIS = {
   '@type': 'MedicalCondition',
@@ -52,7 +45,8 @@ const crumbs = (items: [string, string][]) => ({
   })),
 })
 
-function articleHtml(a: Article) {
+function articleHtml(a: Article, lang: Lang) {
+  const ui = UI[lang]
   const body = parseBody(a.body)
     .map((b) =>
       b.type === 'h2'
@@ -63,22 +57,40 @@ function articleHtml(a: Article) {
     )
     .join('\n')
   const refs = a.refs.map((r) => `<li><a href="${esc(r.url)}">${esc(r.label)}</a></li>`).join('')
+  const image = a.image
+    ? `<figure><img src="/blog/${a.slug}.jpg" alt="${esc(a.image.alt)}" width="${a.image.width}" height="${a.image.height}"><figcaption>${ui.photo}: ${esc(a.image.author)}, ${esc(a.image.license)}, via Wikimedia Commons</figcaption></figure>`
+    : ''
   return `<article><h1>${esc(a.title)}</h1><p>${esc(a.description)}</p>
-<p><time datetime="${a.date}">${a.date}</time> · ${esc(a.category)}</p>
+<p><time datetime="${a.date}">${a.date}</time> · ${esc(ui.categories[a.category])}</p>
+${image}
+<h2>${esc(ui.takeaways)}</h2><ul>${a.takeaways.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
 ${body}
-<h2>Sources</h2><ul>${refs}</ul></article>`
+<h2>${esc(ui.sources)}</h2><ul>${refs}</ul></article>`
 }
 
-const articleList = (list: Article[]) =>
+const articleList = (list: Article[], lang: Lang) =>
   `<ul>${list
-    .map((a) => `<li><a href="/blog/${a.slug}">${esc(a.title)}</a>: ${esc(a.description)}</li>`)
+    .map(
+      (a) =>
+        `<li><a href="${blogPath(lang, a.slug)}">${esc(a.title)}</a>: ${esc(a.description)}</li>`,
+    )
     .join('')}</ul>`
 
-type Page = { path: string; title: string; description: string; html: string; ld: object[] }
+type Page = {
+  path: string
+  lang: Lang
+  title: string
+  description: string
+  html: string
+  ld: object[]
+  /** the same page in every language, for hreflang links and the sitemap */
+  alternates?: Record<Lang, string>
+  image?: string
+  lastmod?: string
+}
 
 const pages: Page[] = Object.entries(PAGES_META).map(([path, meta]) => {
-  const intro = `<h1>${esc(meta.title || SITE.name)}</h1><p>${esc(meta.description)}</p>`
-  let html = intro
+  let html = `<h1>${esc(meta.title || SITE.name)}</h1><p>${esc(meta.description)}</p>`
   let ld: object[] = [
     {
       '@type': 'WebPage',
@@ -88,7 +100,7 @@ const pages: Page[] = Object.entries(PAGES_META).map(([path, meta]) => {
     },
   ]
   if (path === '/') {
-    html += `<h2>Latest articles</h2>${articleList(ARTICLES.slice(0, 6))}`
+    html += `<h2>Latest articles</h2>${articleList(ARTICLES.slice(0, 6), 'en')}`
     ld = [
       ORG,
       {
@@ -97,28 +109,8 @@ const pages: Page[] = Object.entries(PAGES_META).map(([path, meta]) => {
         url: url('/'),
         description: meta.description,
         publisher: { '@id': ORG['@id'] },
-        inLanguage: 'en',
+        inLanguage: LANGS,
       },
-    ]
-  }
-  if (path === '/blog') {
-    html += articleList(ARTICLES)
-    ld = [
-      {
-        '@type': 'Blog',
-        name: `${SITE.name} articles`,
-        url: url('/blog'),
-        description: meta.description,
-        blogPost: ARTICLES.map((a) => ({
-          '@type': 'BlogPosting',
-          headline: a.title,
-          url: url(`/blog/${a.slug}`),
-        })),
-      },
-      crumbs([
-        ['Home', '/'],
-        ['Articles', '/blog'],
-      ]),
     ]
   }
   if (path === '/food' || path === '/guide') {
@@ -140,69 +132,158 @@ const pages: Page[] = Object.entries(PAGES_META).map(([path, meta]) => {
       ORG,
     ]
   }
-  return { path, title: meta.title, description: meta.description, html, ld }
+  return { path, lang: 'en', title: meta.title, description: meta.description, html, ld }
 })
 
-for (const a of ARTICLES) {
-  const path = `/blog/${a.slug}`
+const alternatesFor = (slug?: string) =>
+  Object.fromEntries(LANGS.map((l) => [l, blogPath(l, slug)])) as Record<Lang, string>
+
+for (const lang of LANGS) {
+  const ui = UI[lang]
+  const articles = ARTICLES.map((a) => localize(a, lang))
+  const index = blogPath(lang)
+
   pages.push({
-    path,
-    title: a.title,
-    description: a.description,
-    html: articleHtml(a),
+    path: index,
+    lang,
+    title: ui.blogMetaTitle,
+    description: ui.blogMetaDescription,
+    html: `<h1>${esc(ui.blogTitle)}</h1><p>${esc(ui.blogIntro(articles.length))}</p>${articleList(articles, lang)}`,
+    alternates: alternatesFor(),
     ld: [
       {
-        '@type': 'BlogPosting',
-        headline: a.title,
-        description: a.description,
-        url: url(path),
-        mainEntityOfPage: url(path),
-        datePublished: a.date,
-        dateModified: a.date,
-        articleSection: a.category,
-        inLanguage: 'en',
-        about: PSORIASIS,
-        author: { '@id': ORG['@id'] },
-        publisher: { '@id': ORG['@id'] },
-        citation: a.refs.map((r) => r.url),
+        '@type': 'Blog',
+        name: `${SITE.name}: ${ui.blogMetaTitle}`,
+        url: url(index),
+        description: ui.blogMetaDescription,
+        inLanguage: lang,
+        blogPost: articles.map((a) => ({
+          '@type': 'BlogPosting',
+          headline: a.title,
+          url: url(blogPath(lang, a.slug)),
+        })),
       },
-      ORG,
       crumbs([
         ['Home', '/'],
-        ['Articles', '/blog'],
-        [a.title, path],
+        [ui.blogEyebrow, index],
       ]),
     ],
   })
+
+  for (const a of articles) {
+    const path = blogPath(lang, a.slug)
+    const image = a.image && url(`/blog/${a.slug}.jpg`)
+    pages.push({
+      path,
+      lang,
+      title: a.title,
+      description: a.description,
+      html: articleHtml(a, lang),
+      alternates: alternatesFor(a.slug),
+      image,
+      lastmod: a.date,
+      ld: [
+        {
+          '@type': 'BlogPosting',
+          headline: a.title,
+          description: a.description,
+          url: url(path),
+          mainEntityOfPage: url(path),
+          datePublished: a.date,
+          dateModified: a.date,
+          articleSection: ui.categories[a.category],
+          inLanguage: lang,
+          about: PSORIASIS,
+          ...(lang !== 'en' && { translationOfWork: { '@id': url(blogPath('en', a.slug)) } }),
+          ...(a.image && {
+            image: {
+              '@type': 'ImageObject',
+              url: image,
+              width: a.image.width,
+              height: a.image.height,
+              creditText: a.image.author,
+              license: a.image.licenseUrl ?? undefined,
+              acquireLicensePage: a.image.source,
+            },
+          }),
+          author: { '@id': ORG['@id'] },
+          publisher: { '@id': ORG['@id'] },
+          citation: a.refs.map((r) => r.url),
+        },
+        ORG,
+        crumbs([
+          ['Home', '/'],
+          [ui.blogEyebrow, index],
+          [a.title, path],
+        ]),
+      ],
+    })
+  }
 }
 
-const nav = `<nav>${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' · ')}</nav>`
-const footer = `<p>Educational information, not medical advice.</p>`
+const OG_LOCALE: Record<Lang, string> = {
+  en: 'en_GB',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  no: 'nb_NO',
+  da: 'da_DK',
+}
 
 for (const page of pages) {
+  const ui = UI[page.lang]
   const title = esc(fullTitle(page.title))
   const description = esc(page.description)
-  const isArticle = page.path.startsWith('/blog/')
-  const head = `<title>${title}</title>
-    <meta name="description" content="${description}" />
-    <link rel="canonical" href="${url(page.path)}" />
-    <meta property="og:title" content="${title}" />
-    <meta property="og:description" content="${description}" />
-    <meta property="og:url" content="${url(page.path)}" />
-    <meta property="og:type" content="${isArticle ? 'article' : 'website'}" />
-    <script type="application/ld+json">${JSON.stringify({
+  const alternates = page.alternates
+  const hreflang = alternates
+    ? [
+        ...LANGS.map(
+          (l) => `<link rel="alternate" hreflang="${l}" href="${url(alternates[l])}" />`,
+        ),
+        `<link rel="alternate" hreflang="x-default" href="${url(alternates.en)}" />`,
+      ]
+    : []
+  const head = [
+    `<title>${title}</title>`,
+    `<meta name="description" content="${description}" />`,
+    `<link rel="canonical" href="${url(page.path)}" />`,
+    ...hreflang,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:url" content="${url(page.path)}" />`,
+    `<meta property="og:type" content="${page.path.includes('/blog/') ? 'article' : 'website'}" />`,
+    `<meta property="og:locale" content="${OG_LOCALE[page.lang]}" />`,
+    ...(page.image
+      ? [
+          `<meta property="og:image" content="${page.image}" />`,
+          `<meta name="twitter:card" content="summary_large_image" />`,
+        ]
+      : [`<meta name="twitter:card" content="summary" />`]),
+    `<script type="application/ld+json">${JSON.stringify({
       '@context': 'https://schema.org',
       '@graph': page.ld,
-    }).replace(/</g, '\\u003c')}</script>`
+    }).replace(/</g, '\\u003c')}</script>`,
+  ].join('\n    ')
+
+  const nav = [
+    ['/', 'Home'],
+    ['/guide', ui.nav.guide],
+    ['/food', ui.nav.food],
+    [blogPath(page.lang), ui.nav.blog],
+    ['/about', ui.nav.about],
+    ['/contact', ui.nav.contact],
+  ]
+    .map(([href, label]) => `<a href="${href}">${esc(label)}</a>`)
+    .join(' · ')
 
   const html = template
+    .replace('<html lang="en">', `<html lang="${page.lang}">`)
     .replace(/<title>[\s\S]*<!-- \/meta -->/, head)
     .replace(
       '<div id="root"></div>',
-      `<div id="root">${nav}<main>${page.html}</main>${footer}</div>`,
+      `<div id="root"><nav>${nav}</nav><main>${page.html}</main><p>${esc(ui.footerDisclaimer)}</p></div>`,
     )
 
-  // With `cleanUrls`, Vercel serves /blog/x from blog/x.html.
+  // With `cleanUrls`, Vercel serves /fr/blog/x from fr/blog/x.html.
   const file = page.path === '/' ? 'index.html' : `${page.path.slice(1)}.html`
   mkdirSync(dirname(join(dist, file)), { recursive: true })
   writeFileSync(join(dist, file), html)
@@ -214,11 +295,17 @@ const lastmod = ARTICLES.map((a) => a.date)
 writeFileSync(
   join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${pages
   .map((p) => {
-    const article = ARTICLES.find((a) => `/blog/${a.slug}` === p.path)
-    return `  <url><loc>${url(p.path)}</loc><lastmod>${article?.date ?? lastmod}</lastmod></url>`
+    const alternates = p.alternates
+    const links = alternates
+      ? LANGS.map(
+          (l) =>
+            `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${url(alternates[l])}" />`,
+        ).join('')
+      : ''
+    return `  <url>\n    <loc>${url(p.path)}</loc>\n    <lastmod>${p.lastmod ?? lastmod}</lastmod>${links}\n  </url>`
   })
   .join('\n')}
 </urlset>
@@ -232,7 +319,7 @@ writeFileSync(
 
 > ${PAGES_META['/'].description}
 
-Educational information about psoriasis, written in plain language and based on dermatology guidelines and peer-reviewed research. Not medical advice.
+Educational information about psoriasis, written in plain language and based on dermatology guidelines and peer-reviewed research. Not medical advice. The articles are available in ${LANGS.map((l) => UI[l].name).join(', ')}.
 
 ## Guides
 
@@ -242,7 +329,13 @@ ${['/guide', '/food']
 
 ## Articles
 
-${ARTICLES.map((a) => `- [${a.title}](${url(`/blog/${a.slug}`)}): ${a.description}`).join('\n')}
+${ARTICLES.map((a) => `- [${a.title}](${url(blogPath('en', a.slug))}): ${a.description}`).join('\n')}
+
+## Translations
+
+${LANGS.filter((l) => l !== 'en')
+  .map((l) => `- [${UI[l].blogMetaTitle} (${UI[l].name})](${url(blogPath(l))})`)
+  .join('\n')}
 
 ## About
 
