@@ -23,7 +23,7 @@ function Shield({ percent }: { percent: number }) {
         clipPath="url(#shield-clip)"
         style={{ transition: 'y .5s' }}
       />
-      <path d={path} fill="none" stroke="var(--mantine-color-green-6)" opacity={0.6} />
+      <path d={path} fill="none" stroke="var(--mantine-color-brand-6)" opacity={0.6} />
     </svg>
   )
 }
@@ -40,7 +40,7 @@ export function Habits() {
         <Group wrap="nowrap" align="center" gap="lg">
           <Shield percent={score} />
           <Box>
-            <Text ff="Lexend" fw={600} fz={30}>
+            <Text ff="heading" fw={600} fz={30}>
               {score}%
             </Text>
             <Text c="dimmed" size="sm">
@@ -65,8 +65,8 @@ export function Habits() {
               onClick={() => toggle(i)}
               style={{
                 cursor: 'pointer',
-                borderColor: done ? 'var(--mantine-color-green-6)' : undefined,
-                background: done ? 'var(--mantine-color-green-0)' : undefined,
+                borderColor: done ? 'var(--mantine-color-brand-6)' : undefined,
+                background: done ? 'var(--mantine-color-brand-0)' : undefined,
               }}
             >
               <Group wrap="nowrap" align="flex-start" gap="sm">

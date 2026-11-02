@@ -16,7 +16,7 @@ export function LivingWell() {
             <div key={what}>
               <Group gap="xs" align="baseline">
                 <Text fw={600}>{what}</Text>
-                <Text size="xs" fw={600} c="green.7">
+                <Text size="xs" fw={600} c="brand.7">
                   {when}
                 </Text>
               </Group>

@@ -32,7 +32,7 @@ export function Types() {
       <Panel>
         <Group justify="space-between" align="flex-start">
           <Title order={3}>{type.name} psoriasis</Title>
-          <Text ff="Lexend" fw={600} fz={24} c="green.7">
+          <Text ff="heading" fw={600} fz={24} c="brand.7">
             {type.share}
           </Text>
         </Group>

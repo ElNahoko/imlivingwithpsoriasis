@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://imlivingwithpsoriasis.vercel.app/sitemap.xml

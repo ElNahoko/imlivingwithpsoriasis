@@ -1,21 +1,21 @@
 import { createTheme, type MantineColorsTuple } from '@mantine/core'
 
-/** Brand green: calm, clinical, and the colour of psoriasis awareness. */
-const green: MantineColorsTuple = [
-  '#ECF8F2',
-  '#D8F0E4',
-  '#B0E1C8',
-  '#85D1AA',
-  '#5FC391',
-  '#43BA80',
-  '#1B8A5A',
-  '#17784E',
-  '#126343',
-  '#0C4E34',
+/** Brand blue: clinical, trustworthy, and nowhere near the red of a flare. */
+const brand: MantineColorsTuple = [
+  '#EFF6FF',
+  '#DBEAFE',
+  '#BFDBFE',
+  '#93C5FD',
+  '#60A5FA',
+  '#3B82F6',
+  '#2563EB',
+  '#1D4ED8',
+  '#1E40AF',
+  '#1E3A8A',
 ]
 
 const ink: MantineColorsTuple = [
-  '#F4F7FA',
+  '#F4F6F8',
   '#E6EDF4',
   '#D6E1EB',
   '#B7C6D4',
@@ -24,19 +24,19 @@ const ink: MantineColorsTuple = [
   '#4F6577',
   '#374F63',
   '#22394B',
-  '#122A3D',
+  '#0B1320',
 ]
 
 export const theme = createTheme({
-  primaryColor: 'green',
+  primaryColor: 'brand',
   primaryShade: 6,
-  colors: { green, ink },
+  colors: { brand, ink },
   white: '#FFFFFF',
-  black: '#122A3D',
-  fontFamily: '"Source Sans 3", ui-sans-serif, system-ui, sans-serif',
+  black: '#0B1320',
+  fontFamily: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
   headings: {
-    fontFamily: 'Lexend, ui-sans-serif, system-ui, sans-serif',
-    fontWeight: '600',
+    fontFamily: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
+    fontWeight: '700',
     sizes: {
       h1: { fontSize: '1.75rem', lineHeight: '1.2' },
       h2: { fontSize: '1.4rem', lineHeight: '1.25' },
@@ -60,7 +60,7 @@ export const theme = createTheme({
   },
 })
 
-/** Semantic colours used for medical meaning, kept apart from the brand green. */
+/** Semantic colours used for medical meaning, kept apart from the brand blue. */
 export const SEMANTIC = {
   inflammation: '#D9434A',
   caution: '#C98A08',

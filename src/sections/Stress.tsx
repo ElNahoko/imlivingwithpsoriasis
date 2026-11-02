@@ -39,10 +39,10 @@ function BreathingCircle() {
   return (
     <Card>
       <Stack align="center" gap="xs">
-        <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+        <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
           Two minutes
         </Text>
-        <Text fw={600} ff="Lexend" fz="lg">
+        <Text fw={600} ff="heading" fz="lg">
           Breathe with the circle
         </Text>
         <Text c="dimmed" size="sm" ta="center">
@@ -58,11 +58,11 @@ function BreathingCircle() {
             placeItems: 'center',
             margin: '8px auto',
             background:
-              'radial-gradient(circle at 40% 35%, #fff, var(--mantine-color-green-0) 60%, var(--mantine-color-green-2))',
+              'radial-gradient(circle at 40% 35%, #fff, var(--mantine-color-brand-0) 60%, var(--mantine-color-brand-2))',
             transform: `scale(${running ? current.scale : 0.7})`,
             transition: `transform ${running ? current.ms : 600}ms ease-in-out`,
-            color: 'var(--mantine-color-green-7)',
-            fontFamily: 'Lexend',
+            color: 'var(--mantine-color-brand-7)',
+            fontFamily: 'var(--mantine-font-family-headings)',
             fontWeight: 600,
           }}
         >

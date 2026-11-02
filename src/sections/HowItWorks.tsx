@@ -37,7 +37,7 @@ export function HowItWorks() {
               Time from birth to shedding
             </Text>
             <Group gap={6} align="baseline">
-              <Text ff="Lexend" fw={600} fz={26} c={psoriatic ? 'red.7' : 'teal.7'}>
+              <Text ff="heading" fw={600} fz={26} c={psoriatic ? 'red.7' : 'teal.7'}>
                 {psoriatic ? '3 to 4' : TURNOVER_DAYS.healthy}
               </Text>
               <Text size="sm" c="dimmed">
@@ -84,7 +84,7 @@ export function HowItWorks() {
                 p={6}
                 style={{
                   borderRadius: 8,
-                  background: active ? 'var(--mantine-color-green-0)' : undefined,
+                  background: active ? 'var(--mantine-color-brand-0)' : undefined,
                 }}
               >
                 <Group gap="xs" wrap="nowrap">

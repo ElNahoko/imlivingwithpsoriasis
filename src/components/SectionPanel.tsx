@@ -26,7 +26,7 @@ export function SectionPanel({ compact }: { compact: boolean }) {
           <Stack gap={0} h="100%">
             <Group justify="space-between" align="flex-start" p="md" pb="sm">
               <div>
-                <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+                <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
                   {section.group}
                 </Text>
                 <Title order={2}>{section.title}</Title>
@@ -74,7 +74,7 @@ export function SectionPanel({ compact }: { compact: boolean }) {
             style={{ borderBottom: '1px solid var(--mantine-color-gray-2)' }}
           >
             <div>
-              <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+              <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
                 {section.group}
               </Text>
               <Title order={2}>{section.title}</Title>

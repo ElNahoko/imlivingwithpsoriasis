@@ -46,13 +46,13 @@ export function Tour({ compact, hidden }: { compact: boolean; hidden: boolean })
             flex: 'none',
             borderRadius: 14,
             background:
-              'linear-gradient(135deg, var(--mantine-color-teal-6), var(--mantine-color-green-6))',
-            boxShadow: '0 8px 20px rgba(27,138,90,.28)',
+              'linear-gradient(135deg, var(--mantine-color-brand-4), var(--mantine-color-brand-7))',
+            boxShadow: '0 8px 20px rgba(37,99,235,.28)',
           }}
         />
         <Stack gap={6} style={{ flex: 1 }}>
           <Group justify="space-between" wrap="nowrap">
-            <Text fw={600} ff="Lexend" size="sm" c="green.7">
+            <Text fw={600} ff="heading" size="sm" c="brand.7">
               Nova, your guide
             </Text>
             <Text size="sm" c="dimmed">
@@ -97,7 +97,7 @@ export function Tour({ compact, hidden }: { compact: boolean; hidden: boolean })
                     flex: 1,
                     borderRadius: 2,
                     background:
-                      i < step ? 'var(--mantine-color-green-6)' : 'var(--mantine-color-gray-3)',
+                      i < step ? 'var(--mantine-color-brand-6)' : 'var(--mantine-color-gray-3)',
                   }}
                 />
               ))}

@@ -33,7 +33,7 @@ export function Myths() {
       <Lede>Eight statements people with psoriasis hear all the time. True or false?</Lede>
       <Card>
         <Group justify="space-between" mb="sm">
-          <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+          <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
             Myth check
           </Text>
           <Text size="xs" c="dimmed">

@@ -2,7 +2,7 @@
   --page-bg: radial-gradient(
     110% 80% at 50% 45%,
     #ffffff 0%,
-    #f4f7fa 38%,
+    #f4f6f8 38%,
     #e6edf4 72%,
     #d6e1eb 100%
   );
@@ -16,9 +16,14 @@ body,
 
 body {
   margin: 0;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The 3D guide is a full-screen app: the page itself must not scroll under it. */
+body.guide {
   overflow: hidden;
   background: var(--page-bg);
-  -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
 
@@ -40,9 +45,18 @@ body {
   touch-action: none;
 }
 
+/* Inside a page the body sits in a card. Vertical swipes must still scroll the
+   page on a phone, so this beats the inline touch-action OrbitControls sets. */
+.body-embedded,
+.body-embedded canvas {
+  position: absolute !important;
+  inset: 0;
+  touch-action: pan-y !important;
+}
+
 .site-label {
   font:
-    600 12.5px/1 'Source Sans 3',
+    600 12.5px/1 'Plus Jakarta Sans',
     system-ui,
     sans-serif;
   white-space: nowrap;
@@ -51,7 +65,7 @@ body {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(18, 42, 61, 0.12);
   box-shadow: 0 4px 14px rgba(18, 42, 61, 0.1);
-  color: #122a3d;
+  color: #0b1320;
   transition:
     opacity 0.2s,
     background 0.2s,
@@ -61,15 +75,43 @@ body {
 }
 
 .site-label[data-explored='true'] {
-  border-color: #1b8a5a;
-  color: #126343;
-  background: rgba(236, 248, 242, 0.95);
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: rgba(239, 246, 255, 0.95);
 }
 
 .site-label[data-selected='true'] {
-  background: #122a3d;
-  border-color: #122a3d;
+  background: #0b1320;
+  border-color: #0b1320;
   color: #fff;
+}
+
+a.article-card {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+a.article-card:hover {
+  border-color: var(--mantine-color-brand-3);
+  transform: translateY(-2px);
+}
+
+a.guide-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.guide-link:hover {
+  background: var(--mantine-color-brand-0);
+}
+
+@media (min-width: 62em) {
+  .contact-form {
+    grid-column: span 2;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

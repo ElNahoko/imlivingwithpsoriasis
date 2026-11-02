@@ -26,7 +26,7 @@ export function Triggers() {
             roundCaps
             sections={[{ value: score, color: level.color }]}
             label={
-              <Text ta="center" ff="Lexend" fw={600} fz={26} c={level.color}>
+              <Text ta="center" ff="heading" fw={600} fz={26} c={level.color}>
                 {score}
               </Text>
             }

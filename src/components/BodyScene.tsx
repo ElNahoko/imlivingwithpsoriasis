@@ -7,7 +7,7 @@ import { SITES, type Site, type SiteId } from '../data/sites'
 import { between, createRandom } from '../lib/random'
 import { useStore } from '../store'
 
-const BRAND = new THREE.Color('#1B8A5A')
+const BRAND = new THREE.Color('#2563EB')
 const HOME = { distance: 4, yaw: 0.38, pitch: 0.05, height: 0.9 }
 
 const spherical = (d: number, yaw: number, pitch: number, height: number) =>
@@ -78,12 +78,12 @@ function useScanTexture() {
       size / 2,
       size * 0.5,
     )
-    g.addColorStop(0, 'rgba(27,138,90,0)')
-    g.addColorStop(0.62, 'rgba(27,138,90,0)')
-    g.addColorStop(0.74, 'rgba(27,138,90,.5)')
-    g.addColorStop(0.8, 'rgba(27,138,90,.85)')
-    g.addColorStop(0.86, 'rgba(27,138,90,.3)')
-    g.addColorStop(1, 'rgba(27,138,90,0)')
+    g.addColorStop(0, 'rgba(37,99,235,0)')
+    g.addColorStop(0.62, 'rgba(37,99,235,0)')
+    g.addColorStop(0.74, 'rgba(37,99,235,.5)')
+    g.addColorStop(0.8, 'rgba(37,99,235,.85)')
+    g.addColorStop(0.86, 'rgba(37,99,235,.3)')
+    g.addColorStop(1, 'rgba(37,99,235,0)')
     ctx.fillStyle = g
     ctx.fillRect(0, 0, size, size)
     const tex = new THREE.CanvasTexture(canvas)
@@ -98,7 +98,7 @@ function useBadgeTexture() {
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = size
     const ctx = canvas.getContext('2d')!
-    ctx.fillStyle = '#1B8A5A'
+    ctx.fillStyle = '#2563EB'
     ctx.beginPath()
     ctx.arc(size / 2, size / 2, size * 0.42, 0, Math.PI * 2)
     ctx.fill()
@@ -149,7 +149,7 @@ function useSkinMaterial(sweep: React.RefObject<{ value: number }>) {
           '#include <emissivemap_fragment>',
           `#include <emissivemap_fragment>
            float band = (vWorldY - uSweep) * 18.0;
-           totalEmissiveRadiance += vec3(0.10, 0.56, 0.40) * 0.4 * exp(-band * band);`,
+           totalEmissiveRadiance += vec3(0.15, 0.39, 0.92) * 0.4 * exp(-band * band);`,
         )
     }
     return material
@@ -205,7 +205,13 @@ function SiteLabel({ site, marker }: { site: Site; marker: Marker }) {
   )
 }
 
-function Body({ onHover }: { onHover: (id: SiteId | null) => void }) {
+function Body({
+  onHover,
+  onSelect,
+}: {
+  onHover: (id: SiteId | null) => void
+  onSelect?: (id: SiteId) => void
+}) {
   const { scene } = useGLTF('/body.glb')
   const sweep = useRef({ value: 0.9 })
   const skin = useSkinMaterial(sweep)
@@ -254,6 +260,7 @@ function Body({ onHover }: { onHover: (id: SiteId | null) => void }) {
     onClick: (e: ThreeEvent<MouseEvent>) => {
       e.stopPropagation()
       selectSite(id)
+      onSelect?.(id)
     },
   })
 
@@ -317,7 +324,7 @@ function Body({ onHover }: { onHover: (id: SiteId | null) => void }) {
 }
 
 /** Flies the camera to a site, then hands control straight back to the user. */
-function CameraRig({ compact }: { compact: boolean }) {
+function CameraRig({ compact, embedded }: { compact: boolean; embedded: boolean }) {
   const controls = useRef<OrbitControlsImpl>(null)
   const selectedSite = useStore((s) => s.selectedSite)
   const target = useRef<{ position: THREE.Vector3; look: THREE.Vector3 } | null>(null)
@@ -328,7 +335,12 @@ function CameraRig({ compact }: { compact: boolean }) {
 
   useEffect(() => {
     const home = {
-      position: spherical(compact ? 5.6 : HOME.distance, HOME.yaw, HOME.pitch, HOME.height),
+      position: spherical(
+        compact ? 5.6 : embedded ? 4.8 : HOME.distance,
+        HOME.yaw,
+        HOME.pitch,
+        HOME.height,
+      ),
       look: new THREE.Vector3(0, HOME.height, 0),
     }
     flying.current = true
@@ -352,7 +364,7 @@ function CameraRig({ compact }: { compact: boolean }) {
         .setY(look.y + distance * Math.sin(pitch)),
       look,
     }
-  }, [selectedSite, compact])
+  }, [selectedSite, compact, embedded])
 
   useFrame((_, delta) => {
     const c = controls.current
@@ -378,6 +390,8 @@ function CameraRig({ compact }: { compact: boolean }) {
     <OrbitControls
       ref={controls}
       enablePan={false}
+      // On a page, the wheel belongs to the page scroll, not to the camera.
+      enableZoom={!embedded}
       // Damping recomputes the camera from the control's own spherical state,
       // which would undo the flight lerp above. The flight provides the easing.
       enableDamping={false}
@@ -399,13 +413,25 @@ function CameraRig({ compact }: { compact: boolean }) {
   )
 }
 
-export function BodyScene({ compact }: { compact: boolean }) {
+/**
+ * The 3D body. Full screen in the guide; `embedded` fits it inside a card on a
+ * page, where `onSelect` decides what tapping a plaque does.
+ */
+export function BodyScene({
+  compact,
+  embedded = false,
+  onSelect,
+}: {
+  compact: boolean
+  embedded?: boolean
+  onSelect?: (id: SiteId) => void
+}) {
   const closePanel = useStore((s) => s.closePanel)
   const [hovered, setHovered] = useState<SiteId | null>(null)
 
   return (
     <Canvas
-      className="body-canvas"
+      className={embedded ? 'body-embedded' : 'body-canvas'}
       shadows
       dpr={[1, 2]}
       camera={{ fov: 30, near: 0.05, far: 60, position: [1.48, 1.1, 3.71] }}
@@ -423,10 +449,10 @@ export function BodyScene({ compact }: { compact: boolean }) {
       <directionalLight position={[-3, 2, 1.5]} intensity={0.9} color="#DCE9FF" />
       <directionalLight position={[0, 2.6, -3.2]} intensity={1.3} />
       <Suspense fallback={null}>
-        <Body onHover={setHovered} />
+        <Body onHover={setHovered} onSelect={onSelect} />
       </Suspense>
       <ContactShadows position={[0, 0.001, 0]} opacity={0.32} scale={4} blur={2.4} far={1.6} />
-      <CameraRig compact={compact} />
+      <CameraRig compact={compact} embedded={embedded} />
     </Canvas>
   )
 }
