@@ -1,157 +1,64 @@
-import { useEffect, useState } from 'react'
-import { Anchor, Box, Group, Kbd, Modal, Paper, Stack, Text } from '@mantine/core'
-import { useDisclosure, useMediaQuery } from '@mantine/hooks'
-import { useProgress } from '@react-three/drei'
-import { BodyScene } from './components/BodyScene'
-import { TopBar } from './components/TopBar'
-import { NavRail } from './components/NavRail'
-import { SectionPanel } from './components/SectionPanel'
-import { Tour } from './components/Tour'
-import { LogoMark, Wordmark } from './components/Logo'
-import { useStore } from './store'
+import { Button, Container, Stack, Text, Title } from '@mantine/core'
+import { Guide } from './Guide'
+import { Link } from './lib/router'
+import { usePageMeta, usePath } from './lib/nav'
+import { articleFromPath, isBlogIndex, metaFor } from './data/seo'
+import { langFromPath } from './data/i18n'
+import { SiteLayout } from './pages/SiteLayout'
+import { Home } from './pages/Home'
+import { About } from './pages/About'
+import { Blog } from './pages/Blog'
+import { Contact } from './pages/Contact'
+import { Legal } from './pages/Legal'
+import { ArticlePage } from './pages/ArticlePage'
+import { FoodPage } from './pages/FoodPage'
 
-const CONTROLS: [string, string][] = [
-  ['Rotate the body', 'drag'],
-  ['Zoom in and out', 'scroll or pinch'],
-  ['Learn about a site', 'click a plaque'],
-  ['Reset the view', 'R'],
-  ['Close a panel', 'Esc'],
-]
+const PAGES: Record<string, () => React.JSX.Element> = {
+  '/': Home,
+  '/about': About,
+  '/food': FoodPage,
+  '/contact': Contact,
+  '/privacy': () => <Legal path="/privacy" />,
+  '/terms': () => <Legal path="/terms" />,
+  '/medical-disclaimer': () => <Legal path="/medical-disclaimer" />,
+}
 
-function LoadingVeil() {
-  const { active } = useProgress()
+function NotFound() {
   return (
-    <Box
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 100,
-        display: 'grid',
-        placeItems: 'center',
-        background: '#F4F7FA',
-        opacity: active ? 1 : 0,
-        pointerEvents: 'none',
-        transition: 'opacity .8s',
-      }}
-    >
-      <Stack align="center" gap="sm">
-        <LogoMark size={64} />
-        <Wordmark size={26} />
-        <Text c="dimmed" size="sm">
-          125 million of us. You are not alone.
+    <Container size="sm" py={96}>
+      <Stack align="flex-start" gap="md">
+        <Title order={1} fw={800}>
+          This page does not exist
+        </Title>
+        <Text c="ink.6">
+          It may have moved. The guide and everything else start from the home page.
         </Text>
+        <Button component={Link} href="/" radius="xl">
+          Go to the home page
+        </Button>
       </Stack>
-    </Box>
+    </Container>
   )
 }
 
 export function App() {
-  const compact = useMediaQuery('(max-width: 900px)') ?? false
-  const [helpOpen, help] = useDisclosure(false)
-  const [tourDismissed, setTourDismissed] = useState(false)
-  const section = useStore((s) => s.section)
-  const closePanel = useStore((s) => s.closePanel)
-  const selectSite = useStore((s) => s.selectSite)
-  const setTourVisible = useStore((s) => s.setTourVisible)
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement) return
-      if (e.key === 'Escape') closePanel()
-      if (e.key.toLowerCase() === 'r') selectSite(null)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [closePanel, selectSite])
-
+  const path = usePath().replace(/\/+$/, '') || '/'
+  usePageMeta(metaFor(path), path)
+  if (path === '/guide') return <Guide />
+  const Page = PAGES[path]
+  const article = articleFromPath(path)
+  const lang = langFromPath(path)
   return (
-    <>
-      <BodyScene compact={compact} />
-      <div className="grid-backdrop" />
-      <LoadingVeil />
-
-      <TopBar
-        compact={compact}
-        onHelp={help.open}
-        onTour={() => {
-          setTourVisible(true)
-          setTourDismissed(false)
-        }}
-      />
-      <NavRail compact={compact} />
-      <SectionPanel compact={compact} />
-      {/* On a phone the panel covers the guide, so it steps aside. */}
-      <Tour compact={compact} hidden={tourDismissed || (compact && !!section)} />
-
-      {!compact && !section && (
-        <Paper
-          withBorder
-          px="md"
-          py={8}
-          style={{
-            position: 'fixed',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            bottom: 24,
-            zIndex: 15,
-            borderRadius: 999,
-            background: 'rgba(255,255,255,.84)',
-            backdropFilter: 'blur(20px)',
-          }}
-        >
-          <Group gap="lg">
-            <Text size="sm" c="dimmed">
-              <Text span fw={600} c="ink.9" inherit>
-                Drag
-              </Text>{' '}
-              to rotate
-            </Text>
-            <Text size="sm" c="dimmed">
-              <Text span fw={600} c="ink.9" inherit>
-                Scroll
-              </Text>{' '}
-              to zoom
-            </Text>
-            <Text size="sm" c="dimmed">
-              <Text span fw={600} c="ink.9" inherit>
-                Click a plaque
-              </Text>{' '}
-              to learn about that site
-            </Text>
-          </Group>
-        </Paper>
+    <SiteLayout>
+      {Page ? (
+        <Page />
+      ) : article ? (
+        <ArticlePage key={path} article={article} lang={lang} />
+      ) : isBlogIndex(path) ? (
+        <Blog lang={lang} />
+      ) : (
+        <NotFound />
       )}
-
-      <Modal
-        opened={helpOpen}
-        onClose={help.close}
-        title="Moving around the body"
-        radius="lg"
-        centered
-      >
-        <Stack gap="sm">
-          {CONTROLS.map(([what, how]) => (
-            <Group key={what} justify="space-between">
-              <Text size="sm" c="dimmed">
-                {what}
-              </Text>
-              <Kbd>{how}</Kbd>
-            </Group>
-          ))}
-          <Text size="xs" c="dimmed" mt="sm">
-            Body model:{' '}
-            <Anchor
-              href="http://www.makehumancommunity.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              inherit
-            >
-              MakeHuman
-            </Anchor>{' '}
-            base mesh, CC0. This app is an educational guide and not medical advice.
-          </Text>
-        </Stack>
-      </Modal>
-    </>
+    </SiteLayout>
   )
 }

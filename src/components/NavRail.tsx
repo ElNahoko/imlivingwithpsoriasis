@@ -40,7 +40,7 @@ export function NavRail({ compact }: { compact: boolean }) {
                     display: 'grid',
                     justifyItems: 'center',
                     gap: 4,
-                    background: active ? 'var(--mantine-color-green-6)' : undefined,
+                    background: active ? 'var(--mantine-color-brand-6)' : undefined,
                     color: active ? '#fff' : 'var(--mantine-color-ink-9)',
                   }}
                 >
@@ -92,7 +92,7 @@ export function NavRail({ compact }: { compact: boolean }) {
                     <Box
                       w={7}
                       h={7}
-                      style={{ borderRadius: '50%', background: 'var(--mantine-color-green-6)' }}
+                      style={{ borderRadius: '50%', background: 'var(--mantine-color-brand-6)' }}
                     />
                   ) : null
                 }

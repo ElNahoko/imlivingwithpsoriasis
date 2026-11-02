@@ -60,7 +60,7 @@ export function BodyMap() {
               checked={s.id === selectedSite}
               onChange={() => selectSite(s.id)}
               variant={s.id === selectedSite ? 'filled' : 'outline'}
-              color={explored.includes(s.id) ? 'green' : 'gray'}
+              color={explored.includes(s.id) ? 'brand' : 'gray'}
               size="sm"
             >
               {s.name}
@@ -87,7 +87,7 @@ export function BodyMap() {
           mb="md"
         />
         <Group justify="space-between" align="center" mt="sm">
-          <Text ff="Lexend" fz={30} fw={600}>
+          <Text ff="heading" fz={30} fw={600}>
             {bsa}%
           </Text>
           <Badge color={level.color} variant="light" size="lg">

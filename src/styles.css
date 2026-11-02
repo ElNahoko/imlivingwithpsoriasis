@@ -2,7 +2,7 @@
   --page-bg: radial-gradient(
     110% 80% at 50% 45%,
     #ffffff 0%,
-    #f4f7fa 38%,
+    #f4f6f8 38%,
     #e6edf4 72%,
     #d6e1eb 100%
   );
@@ -16,9 +16,14 @@ body,
 
 body {
   margin: 0;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The 3D guide is a full-screen app: the page itself must not scroll under it. */
+body.guide {
   overflow: hidden;
   background: var(--page-bg);
-  -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }
 
@@ -40,9 +45,18 @@ body {
   touch-action: none;
 }
 
+/* Inside a page the body sits in a card. Vertical swipes must still scroll the
+   page on a phone, so this beats the inline touch-action OrbitControls sets. */
+.body-embedded,
+.body-embedded canvas {
+  position: absolute !important;
+  inset: 0;
+  touch-action: pan-y !important;
+}
+
 .site-label {
   font:
-    600 12.5px/1 'Source Sans 3',
+    600 12.5px/1 'Plus Jakarta Sans',
     system-ui,
     sans-serif;
   white-space: nowrap;
@@ -51,7 +65,7 @@ body {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(18, 42, 61, 0.12);
   box-shadow: 0 4px 14px rgba(18, 42, 61, 0.1);
-  color: #122a3d;
+  color: #0b1320;
   transition:
     opacity 0.2s,
     background 0.2s,
@@ -61,15 +75,168 @@ body {
 }
 
 .site-label[data-explored='true'] {
-  border-color: #1b8a5a;
-  color: #126343;
-  background: rgba(236, 248, 242, 0.95);
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: rgba(239, 246, 255, 0.95);
 }
 
 .site-label[data-selected='true'] {
-  background: #122a3d;
-  border-color: #122a3d;
+  background: #0b1320;
+  border-color: #0b1320;
   color: #fff;
+}
+
+a.article-card {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--mantine-color-gray-2);
+  transition:
+    border-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+a.article-card:hover {
+  border-color: var(--mantine-color-brand-3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(11, 19, 32, 0.08);
+}
+
+/* Cover photos: a soft tint shows while the image loads, or if it is missing. */
+.cover-frame {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--mantine-color-brand-0), var(--mantine-color-ink-0));
+}
+
+.cover-frame .cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+a.article-card:hover .cover {
+  transform: scale(1.03);
+}
+
+.article-cover {
+  aspect-ratio: 21 / 9;
+  border-radius: var(--mantine-radius-xl);
+}
+
+@media (max-width: 48em) {
+  .article-cover {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--mantine-radius-lg);
+  }
+}
+
+/* Category filters: one swipeable row on phones instead of four wrapped rows. */
+@media (max-width: 48em) {
+  .chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(var(--mantine-spacing-md) * -1);
+    padding-inline: var(--mantine-spacing-md);
+  }
+
+  .chip-row > * {
+    flex-shrink: 0;
+  }
+}
+
+.pill {
+  border-radius: 999px;
+}
+
+/* Article: reading column plus a sticky "on this page" list on wide screens. */
+.article-layout {
+  display: grid;
+  gap: 64px;
+}
+
+.article-body {
+  max-width: 700px;
+  min-width: 0;
+}
+
+.article-aside {
+  display: none;
+}
+
+@media (min-width: 62em) {
+  .article-layout {
+    grid-template-columns: minmax(0, 1fr) 240px;
+  }
+
+  .article-aside {
+    display: block;
+    position: sticky;
+    top: 104px;
+    align-self: start;
+    padding-left: 24px;
+    border-left: 1px solid var(--mantine-color-gray-2);
+  }
+}
+
+.article-h2 {
+  scroll-margin-top: 96px;
+}
+
+.article-list li::marker {
+  color: var(--mantine-color-brand-6);
+}
+
+/* Reading progress, drawn by the browser from the scroll position. Browsers
+   without scroll-driven animations simply do not show it. */
+.read-progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 200;
+    background: var(--mantine-color-brand-6);
+    transform-origin: left;
+    animation: read-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes read-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+a.guide-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.guide-link:hover {
+  background: var(--mantine-color-brand-0);
+}
+
+@media (min-width: 62em) {
+  .contact-form {
+    grid-column: span 2;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

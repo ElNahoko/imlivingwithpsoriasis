@@ -51,7 +51,7 @@ export function Diary() {
       <Panel eyebrow="Today">
         <Group justify="space-between">
           <Text fw={600}>Itch</Text>
-          <Text ff="Lexend" fw={600} fz={22}>
+          <Text ff="heading" fw={600} fz={22}>
             {entry.itch}
             <Text span size="sm" c="dimmed">
               {' '}
@@ -79,7 +79,7 @@ export function Diary() {
 
         <Group justify="space-between" mt="sm">
           <Text fw={600}>Sleep</Text>
-          <Text ff="Lexend" fw={600} fz={22}>
+          <Text ff="heading" fw={600} fz={22}>
             {entry.sleep}
             <Text span size="sm" c="dimmed">
               {' '}
@@ -138,7 +138,7 @@ export function Diary() {
                     borderRadius: '4px 4px 2px 2px',
                     background: e ? FLARE_COLORS[e.flare] : 'var(--mantine-color-gray-3)',
                     outline:
-                      day === todayKey() ? '2px solid var(--mantine-color-green-6)' : undefined,
+                      day === todayKey() ? '2px solid var(--mantine-color-brand-6)' : undefined,
                     outlineOffset: 2,
                     transition: 'height .4s',
                   }}
@@ -149,7 +149,7 @@ export function Diary() {
         </Group>
         <SimpleGrid cols={3} spacing="xs" mt="lg">
           <Card padding="xs">
-            <Text ff="Lexend" fw={600} fz={22}>
+            <Text ff="heading" fw={600} fz={22}>
               {show(week.map((e) => e!.itch))}
             </Text>
             <Text size="xs" c="dimmed">
@@ -157,7 +157,7 @@ export function Diary() {
             </Text>
           </Card>
           <Card padding="xs">
-            <Text ff="Lexend" fw={600} fz={22}>
+            <Text ff="heading" fw={600} fz={22}>
               {roughDays}
             </Text>
             <Text size="xs" c="dimmed">
@@ -165,7 +165,7 @@ export function Diary() {
             </Text>
           </Card>
           <Card padding="xs">
-            <Text ff="Lexend" fw={600} fz={22}>
+            <Text ff="heading" fw={600} fz={22}>
               {show(week.map((e) => e!.sleep))}
             </Text>
             <Text size="xs" c="dimmed">

@@ -5,6 +5,11 @@ import '@mantine/core/styles.css'
 import './styles.css'
 import { theme } from './theme'
 import { App } from './App'
+import { langFromPath, loadLang } from './data/i18n'
+
+// Translated articles load before the first render, so the prerendered page
+// stays on screen until the app can show the same language.
+await loadLang(langFromPath(window.location.pathname))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

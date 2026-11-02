@@ -2,6 +2,7 @@ import { ActionIcon, Box, Button, Group, Paper, Progress, Text, Tooltip } from '
 import { IconHelp, IconRoute } from '@tabler/icons-react'
 import { SITES } from '../data/sites'
 import { useStore } from '../store'
+import { Link } from '../lib/router'
 import { LogoMark, Wordmark } from './Logo'
 
 export function TopBar({
@@ -29,17 +30,19 @@ export function TopBar({
         pointerEvents: 'none',
       }}
     >
-      <Group gap="sm" wrap="nowrap" style={{ pointerEvents: 'auto' }}>
-        <LogoMark size={compact ? 36 : 44} />
-        <Box>
-          <Wordmark size={compact ? 15 : 20} />
-          {!compact && (
-            <Text size="sm" c="dimmed">
-              125 million of us live with it. You are not alone.
-            </Text>
-          )}
-        </Box>
-      </Group>
+      <Link href="/" style={{ pointerEvents: 'auto', color: 'inherit', textDecoration: 'none' }}>
+        <Group gap="sm" wrap="nowrap">
+          <LogoMark size={compact ? 36 : 44} />
+          <Box>
+            <Wordmark size={compact ? 15 : 20} />
+            {!compact && (
+              <Text size="sm" c="dimmed">
+                125 million of us live with it. You are not alone.
+              </Text>
+            )}
+          </Box>
+        </Group>
+      </Link>
 
       <Group gap="xs" wrap="nowrap" style={{ pointerEvents: 'auto' }}>
         <Paper
@@ -54,7 +57,7 @@ export function TopBar({
             </Text>
           )}
           <Group gap={4} align="baseline" wrap="nowrap" style={{ whiteSpace: 'nowrap' }}>
-            <Text ff="Lexend" fw={600} fz={compact ? 16 : 19}>
+            <Text ff="heading" fw={600} fz={compact ? 16 : 19}>
               {explored}
             </Text>
             <Text size="sm" c="dimmed">

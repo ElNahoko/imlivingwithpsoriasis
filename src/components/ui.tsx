@@ -23,7 +23,7 @@ export function Panel({
     <Card>
       <Stack gap="xs">
         {eyebrow && (
-          <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+          <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
             {eyebrow}
           </Text>
         )}
@@ -67,7 +67,7 @@ export function NumberedFact({
 }) {
   return (
     <Group align="flex-start" gap="sm" wrap="nowrap">
-      <ThemeIcon variant="light" color="green" size={34} radius="md">
+      <ThemeIcon variant="light" color="brand" size={34} radius="md">
         <Text fw={600} size="sm">
           {index}
         </Text>

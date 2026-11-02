@@ -12,8 +12,8 @@ export function Treatments() {
       </Lede>
 
       {TREATMENTS.map((step, i) => (
-        <Card key={step.name} style={{ borderLeft: '5px solid var(--mantine-color-green-6)' }}>
-          <Text tt="uppercase" fw={600} size="xs" c="green.7" lts="0.06em">
+        <Card key={step.name} style={{ borderLeft: '5px solid var(--mantine-color-brand-6)' }}>
+          <Text tt="uppercase" fw={600} size="xs" c="brand.7" lts="0.06em">
             Step {i + 1} · {step.severity}
           </Text>
           <Title order={3} mt={4}>
